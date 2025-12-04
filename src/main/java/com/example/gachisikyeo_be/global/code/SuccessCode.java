@@ -12,6 +12,7 @@ public enum SuccessCode {
     USER_LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"), // 200
     USER_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 성공"),
     TOKEN_REFRESH_SUCCESS(HttpStatus.OK, "Access Token 재발급 성공"), // 200
+    USER_SOCIAL_NEED_ADDITIONAL_INFO(HttpStatus.OK, "추가 정보 필요"),
 
     // LawDong
     LAWDONG_INIT_SUCCESS(HttpStatus.CREATED, "법정동 데이터 초기 적재 성공"),            // CSV 등으로 처음 넣을 때
