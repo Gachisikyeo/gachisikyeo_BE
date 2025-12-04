@@ -3,8 +3,10 @@ package com.example.gachisikyeo_be.global.users.dto;
 import com.example.gachisikyeo_be.global.users.domain.auth.AuthProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.UserType;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
+@Getter
 public class LoginResponseDto {
     private String accessToken;
     private String refreshToken;
