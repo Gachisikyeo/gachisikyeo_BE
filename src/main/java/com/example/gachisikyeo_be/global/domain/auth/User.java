@@ -1,6 +1,8 @@
 package com.example.gachisikyeo_be.global.domain.auth;
 
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
+import com.example.gachisikyeo_be.global.dto.auth.NormalUserCreateCommand;
+import com.example.gachisikyeo_be.global.dto.auth.SocialUserCreateCommand;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -62,19 +64,37 @@ public class User {
     // 찜, 쿠폰 필드 추가해야 함
 
     public static User createSocialUser(
-            String email,
-            String name,
-            AuthProvider provider,
-            String providerId
+            SocialUserCreateCommand socialUserCreateCommand,
+            LawDong lawDong
     ) {
         return User.builder()
-                .email(email)
-                // 실제로 로그인에 비밀번호를 쓰지 않으므로 더미 값
-                .password("SOCIAL_LOGIN_USER")
-                .name(name)
-                .role(Role.USER) // 기본 ROLE_USER
-                .provider(provider)
-                .providerId(providerId)
+                .email(socialUserCreateCommand.getEmail())
+                .password("SOCIAL_LOGIN_USER")   // 소셜은 더미 패스워드
+                .name(socialUserCreateCommand.getName())
+                .nickName(socialUserCreateCommand.getNickName())
+                .role(Role.USER)
+                .provider(socialUserCreateCommand.getProvider())
+                .providerId(socialUserCreateCommand.getProviderId())
+                .userType(socialUserCreateCommand.getUserType())
+                .lawDong(lawDong)
+                .build();
+    }
+
+    // 일반 로그인 정적 팩토리 메서드
+    public static User createNotSocialUser(
+            NormalUserCreateCommand normalUserCreateCommand,
+            LawDong lawDong
+    ){
+        return User.builder()
+                .email(normalUserCreateCommand.getEmail())
+                .password(normalUserCreateCommand.getEncodedPassword())  // 암호화된 값 넣기
+                .name(normalUserCreateCommand.getName())
+                .nickName(normalUserCreateCommand.getNickName())
+                .role(Role.USER)
+                .provider(AuthProvider.LOCAL)
+                .providerId(normalUserCreateCommand.getEmail())
+                .userType(normalUserCreateCommand.getUserType())
+                .lawDong(lawDong)
                 .build();
     }
 }
