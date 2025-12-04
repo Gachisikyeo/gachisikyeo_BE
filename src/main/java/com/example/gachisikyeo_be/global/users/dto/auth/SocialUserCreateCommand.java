@@ -1,7 +1,7 @@
-package com.example.gachisikyeo_be.global.dto.auth;
+package com.example.gachisikyeo_be.global.users.dto.auth;
 
-import com.example.gachisikyeo_be.global.domain.auth.AuthProvider;
-import com.example.gachisikyeo_be.global.domain.auth.UserType;
+import com.example.gachisikyeo_be.global.users.domain.auth.AuthProvider;
+import com.example.gachisikyeo_be.global.users.domain.auth.UserType;
 import lombok.Builder;
 import lombok.Getter;
 

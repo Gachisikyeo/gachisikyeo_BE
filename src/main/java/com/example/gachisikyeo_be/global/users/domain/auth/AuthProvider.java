@@ -1,4 +1,4 @@
-package com.example.gachisikyeo_be.global.domain.auth;
+package com.example.gachisikyeo_be.global.users.domain.auth;
 
 import lombok.Getter;
 

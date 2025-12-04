@@ -1,8 +1,8 @@
-package com.example.gachisikyeo_be.global.domain.auth;
+package com.example.gachisikyeo_be.global.users.domain.auth;
 
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
-import com.example.gachisikyeo_be.global.dto.auth.NormalUserCreateCommand;
-import com.example.gachisikyeo_be.global.dto.auth.SocialUserCreateCommand;
+import com.example.gachisikyeo_be.global.users.dto.auth.NormalUserCreateCommand;
+import com.example.gachisikyeo_be.global.users.dto.auth.SocialUserCreateCommand;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
