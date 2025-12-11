@@ -4,7 +4,7 @@ import com.example.gachisikyeo_be.global.jwt.TokenProvider;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
 import com.example.gachisikyeo_be.global.users.domain.auth.AuthProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.UserType;
-import com.example.gachisikyeo_be.global.users.dto.LoginResponseDto;
+import com.example.gachisikyeo_be.global.users.dto.login.LoginResponseDto;
 import com.example.gachisikyeo_be.global.users.service.RefreshTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -6,7 +6,7 @@ import com.example.gachisikyeo_be.global.code.ErrorCode;
 import com.example.gachisikyeo_be.global.exception.AuthException;
 import com.example.gachisikyeo_be.global.jwt.TokenProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
-import com.example.gachisikyeo_be.global.users.dto.LoginResponseDto;
+import com.example.gachisikyeo_be.global.users.dto.login.LoginResponseDto;
 import com.example.gachisikyeo_be.global.users.dto.NormalUserSignupRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.SocialSignupRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.auth.NormalUserCreateCommand;

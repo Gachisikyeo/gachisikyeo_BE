@@ -1,4 +1,4 @@
-package com.example.gachisikyeo_be.global.users.dto;
+package com.example.gachisikyeo_be.global.users.dto.login;
 
 import com.example.gachisikyeo_be.global.users.domain.auth.AuthProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.UserType;

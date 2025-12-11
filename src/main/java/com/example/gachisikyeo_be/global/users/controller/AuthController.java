@@ -2,7 +2,7 @@ package com.example.gachisikyeo_be.global.users.controller;
 
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
-import com.example.gachisikyeo_be.global.users.dto.LoginResponseDto;
+import com.example.gachisikyeo_be.global.users.dto.login.LoginResponseDto;
 import com.example.gachisikyeo_be.global.users.dto.NormalUserSignupRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.SocialSignupRequestDto;
 import com.example.gachisikyeo_be.global.users.service.AuthService;
