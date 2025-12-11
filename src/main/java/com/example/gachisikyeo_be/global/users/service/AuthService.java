@@ -2,14 +2,20 @@ package com.example.gachisikyeo_be.global.users.service;
 
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
 import com.example.gachisikyeo_be.app.repository.region.LawDongRepository;
+import com.example.gachisikyeo_be.global.code.ErrorCode;
+import com.example.gachisikyeo_be.global.exception.AuthException;
 import com.example.gachisikyeo_be.global.jwt.TokenProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
 import com.example.gachisikyeo_be.global.users.dto.LoginResponseDto;
+import com.example.gachisikyeo_be.global.users.dto.NormalUserSignupRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.SocialSignupRequestDto;
+import com.example.gachisikyeo_be.global.users.dto.auth.NormalUserCreateCommand;
 import com.example.gachisikyeo_be.global.users.dto.auth.SocialUserCreateCommand;
 import com.example.gachisikyeo_be.global.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +24,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
     private final LawDongRepository lawDongRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public LoginResponseDto socialSignup(SocialSignupRequestDto request) {
 
@@ -55,7 +62,7 @@ public class AuthService {
         String refreshToken = tokenProvider.createRefreshToken(user.getId());
         refreshTokenService.saveOrUpdate(user.getId(), refreshToken);
 
-        return LoginResponseDto.builder()
+        return LoginResponseDto.builder() // 추후 mapper 클래스를 활용예정.
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .id(user.getId())
@@ -65,5 +72,26 @@ public class AuthService {
                 .authProvider(user.getProvider())
                 .userType(user.getUserType())
                 .build();
+    }
+
+    @Transactional
+    public void notSocialSignup(NormalUserSignupRequestDto normalUserSignupRequestDto){
+        if(userRepository.findByEmail(normalUserSignupRequestDto.getEmail()).isPresent()){
+            throw new AuthException(ErrorCode.ALREADY_EXIST_USER);
+        }
+
+        LawDong lawDong = lawDongRepository.findById(normalUserSignupRequestDto.getLawDongId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 지역입니다."));
+
+        NormalUserCreateCommand normalUserCreateCommand = NormalUserCreateCommand.builder()
+                .email(normalUserSignupRequestDto.getEmail())
+                .encodedPassword(passwordEncoder.encode(normalUserSignupRequestDto.getPassword()))
+                .name(normalUserSignupRequestDto.getName())
+                .nickName(normalUserSignupRequestDto.getNickName())
+                .userType(normalUserSignupRequestDto.getUserType())
+                .build();
+
+        User user = User.createNotSocialUser(normalUserCreateCommand, lawDong);
+        userRepository.save(user);
     }
 }
