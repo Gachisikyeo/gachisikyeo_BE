@@ -57,7 +57,7 @@ public class User {
     @Column(name = "USER_TYPE", nullable = false)
     private UserType userType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // 추후 fetch 조인을 활용한 방법으로 EAGER -> LAZY로 변경해야 함, 지금은 프로젝트가 작아서 가능.
     @JoinColumn(name = "law_dong_id")
     private LawDong lawDong;
 

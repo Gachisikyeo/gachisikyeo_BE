@@ -1,11 +1,13 @@
 package com.example.gachisikyeo_be.global.users.service;
 
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
+import com.example.gachisikyeo_be.app.dto.LawDongDto;
 import com.example.gachisikyeo_be.app.repository.region.LawDongRepository;
 import com.example.gachisikyeo_be.global.code.ErrorCode;
 import com.example.gachisikyeo_be.global.exception.AuthException;
 import com.example.gachisikyeo_be.global.jwt.TokenProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
+import com.example.gachisikyeo_be.global.users.dto.login.LoginRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.login.LoginResponseDto;
 import com.example.gachisikyeo_be.global.users.dto.NormalUserSignupRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.SocialSignupRequestDto;
@@ -44,6 +46,8 @@ public class AuthService {
         LawDong lawDong = lawDongRepository.findById(request.getLawDongId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 지역입니다."));
 
+        LawDongDto lawDongDto = LawDongDto.from(lawDong);
+
         // ✅ Command 객체로 감싸기
         SocialUserCreateCommand command = SocialUserCreateCommand.builder()
                 .email(email)
@@ -68,9 +72,11 @@ public class AuthService {
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
+                .nickName(user.getNickName())
                 .role("ROLE_" + roleName)
                 .authProvider(user.getProvider())
                 .userType(user.getUserType())
+                .lawDong(lawDongDto)
                 .build();
     }
 
@@ -93,5 +99,35 @@ public class AuthService {
 
         User user = User.createNotSocialUser(normalUserCreateCommand, lawDong);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public LoginResponseDto login(LoginRequestDto loginRequestDto){
+        User user = userRepository.findByEmail(loginRequestDto.getEmail())
+                .orElseThrow(() -> new AuthException(ErrorCode.NOT_FOUND_USER));
+
+        if(!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())){
+            throw new AuthException(ErrorCode.INVALID_CREDENTIAL);
+        }
+
+        String accessToken = tokenProvider.createAccessToken(user.getId(), user.getRole().name());
+        String refreshToken = tokenProvider.createRefreshToken(user.getId());
+
+        refreshTokenService.saveOrUpdate(user.getId(), refreshToken);
+
+        LawDongDto lawDongDto = LawDongDto.from(user.getLawDong());
+
+        return LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .nickName(user.getNickName())
+                .role("ROLE_" + user.getRole().name())
+                .authProvider(user.getProvider())
+                .userType(user.getUserType())
+                .lawDong(lawDongDto)
+                .build();
     }
 }

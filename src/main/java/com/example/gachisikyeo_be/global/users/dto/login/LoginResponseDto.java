@@ -1,5 +1,6 @@
 package com.example.gachisikyeo_be.global.users.dto.login;
 
+import com.example.gachisikyeo_be.app.dto.LawDongDto;
 import com.example.gachisikyeo_be.global.users.domain.auth.AuthProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.UserType;
 import lombok.Builder;
@@ -13,7 +14,9 @@ public class LoginResponseDto {
     private Long id;
     private String email;
     private String name;
+    private String nickName;
     private String role;
     private AuthProvider authProvider;
     private UserType userType;
+    private LawDongDto lawDong;
 }

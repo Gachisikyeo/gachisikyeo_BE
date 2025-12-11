@@ -57,6 +57,7 @@ public class GoogleOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
             attributes.put("userId", user.getId());
             attributes.put("name", user.getName());
+            attributes.put("nickName", user.getNickName());
             attributes.put("role", user.getRole().name());      // "USER", "ADMIN"
             attributes.put("provider", user.getProvider());      // AuthProvider enum
             attributes.put("userType", user.getUserType());     // "SELLER", "BUYER"

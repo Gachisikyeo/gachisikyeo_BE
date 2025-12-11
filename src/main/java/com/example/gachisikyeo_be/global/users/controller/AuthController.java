@@ -2,6 +2,7 @@ package com.example.gachisikyeo_be.global.users.controller;
 
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
+import com.example.gachisikyeo_be.global.users.dto.login.LoginRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.login.LoginResponseDto;
 import com.example.gachisikyeo_be.global.users.dto.NormalUserSignupRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.SocialSignupRequestDto;
@@ -35,5 +36,13 @@ public class AuthController {
             ){
         authService.notSocialSignup(normalUserSignupRequestDto);
         return ApiResponseTemplate.success(SuccessCode.USER_SIGNUP_SUCCESS, null);
+    }
+
+    @PostMapping("/login")
+    public  ResponseEntity<ApiResponseTemplate<LoginResponseDto>> login(
+            @Valid @RequestBody LoginRequestDto loginRequestDto
+            ){
+        LoginResponseDto loginResponseDto = authService.login(loginRequestDto);
+        return ApiResponseTemplate.success(SuccessCode.USER_LOGIN_SUCCESS, loginResponseDto);
     }
 }
