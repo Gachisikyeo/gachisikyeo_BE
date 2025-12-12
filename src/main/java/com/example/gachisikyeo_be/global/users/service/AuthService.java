@@ -157,4 +157,9 @@ public class AuthService {
                 .refreshToken(refreshTokenRequestDto.getRefreshToken())
                 .build();
     }
+
+    @Transactional
+    public void delete(Long userId){
+        refreshTokenService.deleteByUserId(userId);
+    }
 }

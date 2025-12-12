@@ -12,6 +12,8 @@ import com.example.gachisikyeo_be.global.users.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,5 +56,14 @@ public class AuthController {
             ){
             TokenDto tokenDto = authService.refresh(refreshTokenRequestDto);
             return ApiResponseTemplate.success(SuccessCode.TOKEN_REFRESH_SUCCESS, tokenDto);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponseTemplate<Void>> logout(
+            @AuthenticationPrincipal UserDetails userDetails
+            ){
+            Long userId = Long.parseLong(userDetails.getUsername());
+            authService.delete(userId);
+            return ApiResponseTemplate.success(SuccessCode.USER_LOGOUT_SUCCESS, null);
     }
 }
