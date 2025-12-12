@@ -26,7 +26,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("oauth2/signup")
+    @PostMapping("/oauth2/signup")
     public ResponseEntity<ApiResponseTemplate<LoginResponseDto>> socialSignup(
             @Valid @RequestBody SocialSignupRequestDto socialSignupRequestDto
             ){
