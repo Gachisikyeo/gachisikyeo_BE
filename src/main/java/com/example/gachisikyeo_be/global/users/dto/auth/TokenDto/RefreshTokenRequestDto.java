@@ -1,4 +1,4 @@
-package com.example.gachisikyeo_be.global.users.dto.auth;
+package com.example.gachisikyeo_be.global.users.dto.auth.TokenDto;
 
 import lombok.Getter;
 import lombok.Setter;
