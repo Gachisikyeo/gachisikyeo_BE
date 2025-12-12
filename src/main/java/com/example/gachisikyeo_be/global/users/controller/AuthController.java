@@ -2,6 +2,8 @@ package com.example.gachisikyeo_be.global.users.controller;
 
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
+import com.example.gachisikyeo_be.global.users.dto.auth.TokenDto.RefreshTokenRequestDto;
+import com.example.gachisikyeo_be.global.users.dto.auth.TokenDto.TokenDto;
 import com.example.gachisikyeo_be.global.users.dto.login.LoginRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.login.LoginResponseDto;
 import com.example.gachisikyeo_be.global.users.dto.NormalUserSignupRequestDto;
@@ -39,10 +41,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public  ResponseEntity<ApiResponseTemplate<LoginResponseDto>> login(
+    public ResponseEntity<ApiResponseTemplate<LoginResponseDto>> login(
             @Valid @RequestBody LoginRequestDto loginRequestDto
             ){
         LoginResponseDto loginResponseDto = authService.login(loginRequestDto);
         return ApiResponseTemplate.success(SuccessCode.USER_LOGIN_SUCCESS, loginResponseDto);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponseTemplate<TokenDto>> refresh(
+            @RequestBody RefreshTokenRequestDto refreshTokenRequestDto
+            ){
+            TokenDto tokenDto = authService.refresh(refreshTokenRequestDto);
+            return ApiResponseTemplate.success(SuccessCode.TOKEN_REFRESH_SUCCESS, tokenDto);
     }
 }

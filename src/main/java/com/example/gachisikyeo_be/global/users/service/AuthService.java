@@ -7,6 +7,8 @@ import com.example.gachisikyeo_be.global.code.ErrorCode;
 import com.example.gachisikyeo_be.global.exception.AuthException;
 import com.example.gachisikyeo_be.global.jwt.TokenProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
+import com.example.gachisikyeo_be.global.users.dto.auth.TokenDto.RefreshTokenRequestDto;
+import com.example.gachisikyeo_be.global.users.dto.auth.TokenDto.TokenDto;
 import com.example.gachisikyeo_be.global.users.dto.login.LoginRequestDto;
 import com.example.gachisikyeo_be.global.users.dto.login.LoginResponseDto;
 import com.example.gachisikyeo_be.global.users.dto.NormalUserSignupRequestDto;
@@ -128,6 +130,31 @@ public class AuthService {
                 .authProvider(user.getProvider())
                 .userType(user.getUserType())
                 .lawDong(lawDongDto)
+                .build();
+    }
+
+    @Transactional
+    public TokenDto refresh(RefreshTokenRequestDto refreshTokenRequestDto){
+        if(!tokenProvider.validateToken(refreshTokenRequestDto.getRefreshToken())){
+            throw new AuthException(ErrorCode.EXPIRED_REFRESH_TOKEN);
+        }
+
+        Long userId = Long.parseLong(tokenProvider.getUserIdFromToken(refreshTokenRequestDto.getRefreshToken()));
+        String savedToken = refreshTokenService.findTokenByUserId(userId);
+
+        // ✅ 요청으로 들어온 RefreshToken이 DB와 다르면 위조된 것
+        if (savedToken == null || !savedToken.equals(refreshTokenRequestDto.getRefreshToken())) {
+            throw new AuthException(ErrorCode.TOKEN_INVALID);
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AuthException(ErrorCode.NOT_FOUND_USER));
+
+        String newAccessToken = tokenProvider.createAccessToken(user.getId(), user.getRole().name());
+
+        return TokenDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshTokenRequestDto.getRefreshToken())
                 .build();
     }
 }
