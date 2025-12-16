@@ -17,7 +17,6 @@ public class CreateGroupPurchaseRequestDto {
     @NotNull(message = "regionId는 필수입니다.")
     private Long regionId;
 
-    @NotBlank(message = "title은 필수입니다.")
     @Min(value = 1, message = "hostBuyQuantity는 1 이상이어야 합니다.")
     private int hostBuyQuantity;
 
