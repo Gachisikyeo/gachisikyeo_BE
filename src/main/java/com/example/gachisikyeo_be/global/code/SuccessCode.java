@@ -22,8 +22,10 @@ public enum SuccessCode {
     LAWDONG_DONG_LIST_SUCCESS(HttpStatus.OK, "읍면동 목록 조회 성공"),
 
     // Business
-    BUSINESS_ENROLL_SUCCESS(HttpStatus.CREATED, "상점 등록 성공");
+    BUSINESS_ENROLL_SUCCESS(HttpStatus.CREATED, "상점 등록 성공"),
 
+    // GroupPurchase
+    GROUP_PURCHASE_CREATED(HttpStatus.CREATED, "공동구매 열기 성공");
     private final HttpStatus httpStatus;
     private final String message;
 }
