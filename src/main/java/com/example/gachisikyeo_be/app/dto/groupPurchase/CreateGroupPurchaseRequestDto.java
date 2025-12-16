@@ -1,18 +1,20 @@
-package com.example.gachisikyeo_be.app.domain.groupPurchase;
+package com.example.gachisikyeo_be.app.dto.groupPurchase;
 
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
-public class GroupPurchaseCreateCommand {
+public class CreateGroupPurchaseRequestDto {
     private Long productId;
+    private Long regionId;
+
     private int hostBuyQuantity;
     private int targetQuantity;
     private int minimumOrderUnit;
+
     private LocalDateTime groupEndAt;
+
     private String pickupLocation;
     private LocalDateTime pickupAt;
 }

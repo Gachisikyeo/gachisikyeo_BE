@@ -33,7 +33,7 @@ public class GroupPurchase extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Product 엔티티가 아직 없으니 우선 FK 값만 보관
+    // Product 엔티티가 아직 없으니 우선 FK 값만 보관   private Product product; 로 구현하셈
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
@@ -47,15 +47,19 @@ public class GroupPurchase extends BaseTimeEntity {
     @JoinColumn(name = "region_id", nullable = false)
     private LawDong region;
 
-    @Column(nullable = false, length = 255)
-    private String title;
+    // 총대가 구매하는 수량
+    @Column(name = "host_buy_quantity", nullable = false)
+    private int hostBuyQuantity;
 
+    // 목표 수량
     @Column(name = "target_quantity", nullable = false)
     private int targetQuantity;
 
+    // 최소 주문 수량
     @Column(name = "minimum_order_unit", nullable = false)
     private int minimumOrderUnit;
 
+    // 현재 남은 수량
     @Column(name = "current_quantity", nullable = false)
     private int currentQuantity;
 
@@ -81,10 +85,10 @@ public class GroupPurchase extends BaseTimeEntity {
                 .productId(cmd.getProductId())
                 .hostUser(hostUser)
                 .region(region)
-                .title(cmd.getTitle())
+                .hostBuyQuantity(cmd.getHostBuyQuantity())
                 .targetQuantity(cmd.getTargetQuantity())
                 .minimumOrderUnit(cmd.getMinimumOrderUnit())
-                .currentQuantity(0)
+                .currentQuantity(48-(cmd.getHostBuyQuantity()))
                 .groupEndAt(cmd.getGroupEndAt())
                 .pickupLocation(cmd.getPickupLocation())
                 .pickupAt(cmd.getPickupAt())
