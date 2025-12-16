@@ -19,7 +19,10 @@ public enum SuccessCode {
     LAWDONG_REFRESH_SUCCESS(HttpStatus.OK, "법정동 데이터 갱신 성공"),                 // 나중에 재갱신용 (있으면)
     LAWDONG_SIDO_LIST_SUCCESS(HttpStatus.OK, "시도 목록 조회 성공"),                  // /law-dong/sido
     LAWDONG_SIGUNGU_LIST_SUCCESS(HttpStatus.OK, "시군구 목록 조회 성공"),             // /law-dong/sigungu
-    LAWDONG_DONG_LIST_SUCCESS(HttpStatus.OK, "읍면동 목록 조회 성공");                 // /law-dong/dong
+    LAWDONG_DONG_LIST_SUCCESS(HttpStatus.OK, "읍면동 목록 조회 성공"),
+
+    // Business
+    BUSINESS_ENROLL_SUCCESS(HttpStatus.CREATED, "상점 등록 성공");
 
     private final HttpStatus httpStatus;
     private final String message;
