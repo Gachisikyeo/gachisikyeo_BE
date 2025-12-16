@@ -37,5 +37,4 @@ public class CreateGroupPurchaseRequestDto {
 
     @NotNull(message = "pickupAt은 필수입니다.")
     private LocalDateTime pickupAt;
-
 }
