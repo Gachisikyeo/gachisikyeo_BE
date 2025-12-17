@@ -51,7 +51,7 @@ public class AuthController {
         return ApiResponseTemplate.success(SuccessCode.USER_SIGNUP_SUCCESS, null);
     }
 
-    @Operation(summary = "로그인", description = "로그인 후, 인증 토큰을 발급합니다.")
+    @Operation(summary = "로그인", description = "로그인 합니다.")
     @ApiResponse(responseCode = "200", description = "로그인 성공")
     @PostMapping("/login")
     public ResponseEntity<ApiResponseTemplate<LoginResponseDto>> login(

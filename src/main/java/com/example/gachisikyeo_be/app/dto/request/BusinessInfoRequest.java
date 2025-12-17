@@ -19,11 +19,11 @@ public class BusinessInfoRequest {
     @NotBlank
     private String storeName;         // 상호명(법인명)
 
-    @Schema(description = "대표자명")
+    @Schema(description = "대표자명", example = "왕꿀벌")
     @NotBlank
     private String ceoName;           // 대표자명
 
-    @Schema(description = "사업장 주소")
+    @Schema(description = "사업장 주소", example = "서울특별시 강남구 테헤란로 123, 2층(역삼동, B빌딩)")
     @NotBlank
     private String address;           // 사업장 주소
 
@@ -32,11 +32,11 @@ public class BusinessInfoRequest {
     @AssertTrue
     private boolean sellerTermsAgreed;
 
-    @Schema(description = "개인정보 수집 및 이용 동의 여부")
+    @Schema(description = "개인정보 수집 및 이용 동의 여부", example = "true")
     @AssertTrue
     private boolean privacyPolicyAgreed;
 
-    @Schema(description = "전자금융거래 이용약관 동의 여부")
+    @Schema(description = "전자금융거래 이용약관 동의 여부", example = "true")
     @AssertTrue
     private boolean electronicFinanceAgreed;
 }

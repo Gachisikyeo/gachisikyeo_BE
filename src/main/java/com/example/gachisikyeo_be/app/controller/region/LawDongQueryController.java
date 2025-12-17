@@ -27,7 +27,7 @@ public class LawDongQueryController {
      * 시도 목록
      * GET /law-dong/sido
      */
-    @Operation(summary = "조회", description = "전체 시/도 목록 조회")
+    @Operation(summary = "시/도 조회", description = "전체 시/도 목록 조회")
     @ApiResponse(responseCode = "200", description = "시/도 목록 조회 성공")
     @GetMapping("/sido")
     public ResponseEntity<ApiResponseTemplate<List<String>>> getSidoList() {
@@ -39,7 +39,7 @@ public class LawDongQueryController {
      * 시군구 목록
      * GET /law-dong/sigungu?sido=서울특별시
      */
-    @Operation(summary = "조회", description = "선택한 시/도의 시/군/구 목록 조회")
+    @Operation(summary = "시/군/구 조회", description = "선택한 시/도의 시/군/구 목록 조회")
     @ApiResponse(responseCode = "200", description = "시/군/구 목록 조회 성공")
     @GetMapping("/sigungu")
     public ResponseEntity<ApiResponseTemplate<List<String>>> getSigunguList(@RequestParam String sido) {
@@ -51,7 +51,7 @@ public class LawDongQueryController {
      * 동 목록
      * GET /law-dong/dong?sido=서울특별시&sigungu=구로구
      */
-    @Operation(summary = "조회", description = "선택한 시/도와 시/군/구의 동 목록 조회")
+    @Operation(summary = "동 조회", description = "선택한 시/도와 시/군/구의 동 목록 조회")
     @ApiResponse(responseCode = "200", description = "동 목록 조회 성공")
     @GetMapping("/dong")
     public ResponseEntity<ApiResponseTemplate<List<String>>> getDongList(

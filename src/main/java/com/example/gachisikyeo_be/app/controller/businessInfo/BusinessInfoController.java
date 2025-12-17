@@ -47,7 +47,7 @@ public class BusinessInfoController {
 //                .body(BusinessInfoResponse.from(businessInfo));
 //    }
 
-    @Operation(summary = "추가", description = """
+    @Operation(summary = "판매자(사업자) 정보 등록", description = """
             판매자(사업자) 정보를 등록합니다.
             JWT 인증된 사용자만 등록 가능합니다.
             """,
