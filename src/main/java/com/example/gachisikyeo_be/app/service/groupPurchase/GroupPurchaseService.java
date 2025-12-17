@@ -48,6 +48,12 @@ public class GroupPurchaseService {
 
         return CreateGroupPurchaseResponseDto.builder()
                 .groupPurchaseId(saved.getId())
+                .currentQuantity(saved.getCurrentQuantity())
+                .groupEndAt(saved.getGroupEndAt())
+                .userNickName(saved.getHostUser().getNickName())
+                .regionId(saved.getRegion().getId())
+                .targetQuantity(saved.getTargetQuantity())
+                .currentQuantity(saved.getCurrentQuantity())
                 .build();
     }
 
