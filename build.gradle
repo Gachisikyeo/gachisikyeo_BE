@@ -44,7 +44,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.680'
-
 }
 
 tasks.named('test') {
