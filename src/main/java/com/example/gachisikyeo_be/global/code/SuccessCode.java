@@ -24,9 +24,15 @@ public enum SuccessCode {
     // Business
     BUSINESS_ENROLL_SUCCESS(HttpStatus.CREATED, "상점 등록 성공"),
 
+
     // GroupPurchase
     GROUP_PURCHASE_CREATED(HttpStatus.CREATED, "공동구매 열기 성공"),
-    GROUP_PURCHASE_LIST_FETCHED(HttpStatus.OK, "리스트 추출 성공");
+    GROUP_PURCHASE_LIST_FETCHED(HttpStatus.OK, "리스트 추출 성공"),
+
+    // Product
+    PRODUCT_CREATED(HttpStatus.CREATED, "상품 등록 성공"),
+    FILE_UPLOAD_SUCCESS(HttpStatus.CREATED, "파일 업로드 성공"),
+    FILE_DELETE_SUCCESS(HttpStatus.OK, "파일 삭제 성공");
 
     private final HttpStatus httpStatus;
     private final String message;
