@@ -1,5 +1,6 @@
 package com.example.gachisikyeo_be.app.dto.groupPurchase;
 
+import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchase;
 import lombok.Builder;
 import lombok.Getter;
 
