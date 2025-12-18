@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class GroupPurchaseService {
     private final GroupPurchaseRepository groupPurchaseRepository;
 
     @Transactional
-    public CreateGroupPurchaseResponseDto create(Long hostUserId, CreateGroupPurchaseRequestDto req) {
+    public CreateGroupPurchaseResponseDto create(Long hostUserId, Long productId, CreateGroupPurchaseRequestDto req) {
 
         User host = userRepository.findById(hostUserId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 사용자입니다. userId=" + hostUserId));
@@ -37,7 +36,7 @@ public class GroupPurchaseService {
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 지역입니다. regionId=" + req.getRegionId()));
 
         GroupPurchaseCreateCommand cmd = GroupPurchaseCreateCommand.builder()
-                .productId(req.getProductId())
+                .productId(productId) // PathVariable에서 받은 값 사용
                 .hostBuyQuantity(req.getHostBuyQuantity())
                 .targetQuantity(req.getTargetQuantity())
                 .minimumOrderUnit(req.getMinimumOrderUnit())
@@ -48,14 +47,7 @@ public class GroupPurchaseService {
 
         GroupPurchase saved = groupPurchaseRepository.save(GroupPurchase.create(host, region, cmd));
 
-        return CreateGroupPurchaseResponseDto.builder()
-                .groupPurchaseId(saved.getId())
-                .currentQuantity(saved.getCurrentQuantity())
-                .groupEndAt(saved.getGroupEndAt())
-                .userNickName(saved.getHostUser().getNickName())
-                .regionId(saved.getRegion().getId())
-                .targetQuantity(saved.getTargetQuantity())
-                .currentQuantity(saved.getCurrentQuantity())
-                .build();
+        // 응답은 from()으로 통일
+        return CreateGroupPurchaseResponseDto.from(saved);
     }
 }

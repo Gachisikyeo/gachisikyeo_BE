@@ -10,10 +10,28 @@ import java.time.LocalDateTime;
 @Builder
 public class CreateGroupPurchaseResponseDto {
     private Long groupPurchaseId;
+
     private Long regionId;
+    private String regionName;
+
+    private Long hostUserId;
     private String userNickName;
+
     private int currentQuantity;
     private int targetQuantity;
     // here : 여기에 총 몇 명이 해당 공구에 참가중인지 넣어야 함
     private LocalDateTime groupEndAt;
+
+    public static CreateGroupPurchaseResponseDto from(GroupPurchase gp) {
+        return CreateGroupPurchaseResponseDto.builder()
+                .groupPurchaseId(gp.getId())
+                .regionId(gp.getRegion().getId())
+                .regionName(gp.getRegion().getSido() + " " + gp.getRegion().getSigungu() + " " + gp.getRegion().getDong())
+                .hostUserId(gp.getHostUser().getId())
+                .userNickName(gp.getHostUser().getNickName())
+                .currentQuantity(gp.getCurrentQuantity())
+                .targetQuantity(gp.getTargetQuantity())
+                .groupEndAt(gp.getGroupEndAt())
+                .build();
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.gachisikyeo_be.app.dto.groupPurchase;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -11,8 +13,6 @@ import java.time.LocalDateTime;
 
 @Getter
 public class CreateGroupPurchaseRequestDto {
-    @NotNull(message = "productId는 필수입니다.")
-    private Long productId;
 
     @NotNull(message = "regionId는 필수입니다.")
     private Long regionId;
@@ -28,6 +28,7 @@ public class CreateGroupPurchaseRequestDto {
 
     @NotNull(message = "groupEndAt은 필수입니다.")
     @Future(message = "groupEndAt은 현재 시각 이후여야 합니다.")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime groupEndAt;
 
     @NotBlank(message = "pickupLocation은 필수입니다.")
@@ -35,5 +36,13 @@ public class CreateGroupPurchaseRequestDto {
     private String pickupLocation;
 
     @NotNull(message = "pickupAt은 필수입니다.")
+    @Future(message = "pickupAt은 현재 시각 이후여야 합니다.")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime pickupAt;
+
+    @AssertTrue(message = "pickupAt은 groupEndAt 이후여야 합니다.")
+    public boolean isPickupAfterEnd() {
+        if (groupEndAt == null || pickupAt == null) return true; // @NotNull이 잡아줌
+        return pickupAt.isAfter(groupEndAt);
+    }
 }

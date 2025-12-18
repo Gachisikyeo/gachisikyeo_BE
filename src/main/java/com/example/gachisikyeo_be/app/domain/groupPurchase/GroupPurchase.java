@@ -60,6 +60,11 @@ public class GroupPurchase extends BaseTimeEntity {
     private int minimumOrderUnit;
 
     // 현재 남은 수량
+    /**
+     * 현재 참여(주문) 수량 (누적)
+     * - 초기: hostBuyQuantity
+     * - 참가자가 늘면 증가
+     */
     @Column(name = "current_quantity", nullable = false)
     private int currentQuantity;
 
@@ -88,11 +93,15 @@ public class GroupPurchase extends BaseTimeEntity {
                 .hostBuyQuantity(cmd.getHostBuyQuantity())
                 .targetQuantity(cmd.getTargetQuantity())
                 .minimumOrderUnit(cmd.getMinimumOrderUnit())
-                .currentQuantity(48-(cmd.getHostBuyQuantity()))
+                .currentQuantity(cmd.getHostBuyQuantity()) // 매직넘버 제거, 초기값 일관성
                 .groupEndAt(cmd.getGroupEndAt())
                 .pickupLocation(cmd.getPickupLocation())
                 .pickupAt(cmd.getPickupAt())
                 .status(GroupPurchaseStatus.OPEN)
                 .build();
+    }
+
+    public boolean isTargetAchieved() {
+        return currentQuantity >= targetQuantity;
     }
 }

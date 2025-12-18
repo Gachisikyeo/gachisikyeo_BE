@@ -1,7 +1,10 @@
 package com.example.gachisikyeo_be.global.exception.handler;
 
+import com.example.gachisikyeo_be.global.code.ErrorCode;
+import com.example.gachisikyeo_be.global.exception.BusinessException;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,5 +28,11 @@ public class GlobalExceptionHandler {
                 .message("요청 값 검증 실패")
                 .data(errors)
                 .build();
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponseTemplate<Object>> handleBusiness(BusinessException e) {
+        ErrorCode ec = e.getErrorCode();
+        return ApiResponseTemplate.error(ec);
     }
 }

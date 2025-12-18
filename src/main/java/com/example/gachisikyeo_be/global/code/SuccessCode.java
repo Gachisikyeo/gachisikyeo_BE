@@ -10,7 +10,7 @@ public enum SuccessCode {
     // ✅ Auth
     USER_SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입 성공"), // 201
     USER_LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"), // 200
-    USER_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 성공"),
+    USER_LOGOUT_SUCCESS(HttpStatus.NO_CONTENT, "로그아웃 성공"),
     TOKEN_REFRESH_SUCCESS(HttpStatus.OK, "Access Token 재발급 성공"), // 200
     USER_SOCIAL_NEED_ADDITIONAL_INFO(HttpStatus.OK, "추가 정보 필요"),
 
@@ -25,7 +25,9 @@ public enum SuccessCode {
     BUSINESS_ENROLL_SUCCESS(HttpStatus.CREATED, "상점 등록 성공"),
 
     // GroupPurchase
-    GROUP_PURCHASE_CREATED(HttpStatus.CREATED, "공동구매 열기 성공");
+    GROUP_PURCHASE_CREATED(HttpStatus.CREATED, "공동구매 열기 성공"),
+    GROUP_PURCHASE_LIST_FETCHED(HttpStatus.OK, "리스트 추출 성공");
+
     private final HttpStatus httpStatus;
     private final String message;
 }

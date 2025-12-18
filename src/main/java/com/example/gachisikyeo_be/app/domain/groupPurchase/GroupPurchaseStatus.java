@@ -1,5 +1,8 @@
 package com.example.gachisikyeo_be.app.domain.groupPurchase;
 
+import lombok.Getter;
+
+@Getter
 public enum GroupPurchaseStatus {
     OPEN("공구 모집중"),       // 모집중
     SUCCESS("공구 목표 달성"),    // 목표달성
