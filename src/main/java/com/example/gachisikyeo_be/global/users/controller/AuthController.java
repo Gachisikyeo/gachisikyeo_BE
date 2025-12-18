@@ -16,8 +16,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,11 +75,11 @@ public class AuthController {
 
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다.", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponse(responseCode = "200", description = "로그아웃 성공")
-    @PostMapping("/logout")
+    @DeleteMapping("/logout")
     public ResponseEntity<ApiResponseTemplate<Void>> logout(
-            @AuthenticationPrincipal UserDetails userDetails
+            Authentication authentication
             ){
-            Long userId = Long.parseLong(userDetails.getUsername());
+            Long userId = Long.parseLong(authentication.getName());
             authService.delete(userId);
             return ApiResponseTemplate.success(SuccessCode.USER_LOGOUT_SUCCESS, null);
     }
