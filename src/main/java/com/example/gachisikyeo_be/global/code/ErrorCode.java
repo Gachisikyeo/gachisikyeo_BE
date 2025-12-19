@@ -14,9 +14,15 @@ public enum ErrorCode {
     INVALID_CREDENTIAL(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Refresh Token이 만료되었거나 유효하지 않습니다."),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다."),
+    AUTH_REQUIRED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다"),
+    AUTH_INVALID_PRINCIPAL(HttpStatus.UNAUTHORIZED, "인증 사용자 정보가 올바르지 않습니다."),
+
+    // 403 Forbidden
+    GROUP_PURCHASE_CREATE_FORBIDDEN(HttpStatus.FORBIDDEN, "BUYER만 공동구매를 생성할 수 있습니다."),
 
     // 404 Not Found
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
+    REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 지역입니다."),
 
     // 409 Conflict
     ALREADY_EXIST_USER(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
