@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update   # EC2 dev는 create 비추천(재시작 시 데이터/스키마 문제)
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: "http://gachisikyeo.duckdns.org/login/oauth2/code/google"
+
+server:
+  forward-headers-strategy: framework
