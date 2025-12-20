@@ -5,14 +5,19 @@ import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchaseCreateCo
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseRequestDto;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseResponseDto;
+import com.example.gachisikyeo_be.app.dto.groupPurchase.GroupPurchaseListItemResponseDto;
 import com.example.gachisikyeo_be.app.repository.groupPurchase.GroupPurchaseRepository;
 import com.example.gachisikyeo_be.app.repository.region.LawDongRepository;
+import com.example.gachisikyeo_be.global.code.ErrorCode;
+import com.example.gachisikyeo_be.global.exception.BusinessException;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
 import com.example.gachisikyeo_be.global.users.domain.auth.UserType;
 import com.example.gachisikyeo_be.global.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -26,14 +31,14 @@ public class GroupPurchaseService {
     public CreateGroupPurchaseResponseDto create(Long hostUserId, Long productId, CreateGroupPurchaseRequestDto req) {
 
         User host = userRepository.findById(hostUserId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 사용자입니다. userId=" + hostUserId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         if (host.getUserType() != UserType.BUYER) {
-            throw new IllegalStateException("BUYER만 공구를 생성할 수 있습니다.");
+            throw new BusinessException(ErrorCode.GROUP_PURCHASE_CREATE_FORBIDDEN);
         }
 
         LawDong region = lawDongRepository.findById(req.getRegionId())
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 지역입니다. regionId=" + req.getRegionId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.REGION_NOT_FOUND));
 
         GroupPurchaseCreateCommand cmd = GroupPurchaseCreateCommand.builder()
                 .productId(productId) // PathVariable에서 받은 값 사용
@@ -49,5 +54,13 @@ public class GroupPurchaseService {
 
         // 응답은 from()으로 통일
         return CreateGroupPurchaseResponseDto.from(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GroupPurchaseListItemResponseDto> listByProduct(Long productId) {
+        return groupPurchaseRepository.findByProductIdOrderByCreatedAtDesc(productId)
+                .stream()
+                .map(GroupPurchaseListItemResponseDto::from)
+                .toList();
     }
 }
