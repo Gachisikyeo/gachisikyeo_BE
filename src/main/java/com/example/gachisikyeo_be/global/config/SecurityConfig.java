@@ -15,6 +15,11 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -24,11 +29,42 @@ public class SecurityConfig {
     private final OAuth2UserProviderRouter oAuth2UserProviderRouter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
+    /**
+     * ✅ CORS 정책(배포 도메인 + 로컬 개발 도메인 허용)
+     * - JWT를 Authorization 헤더로 보내는 구조라 allowCredentials(false) 권장
+     * - 배포 도메인은 실제 값으로 반드시 변경
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of(
+                "https://gachisikyeo.com", // TODO: 프론트 배포 도메인
+                "http://localhost:3000",       // React(CRA/Next)
+                "http://localhost:5173"        // React(Vite)
+        ));
+
+        // ✅ 프리플라이트 포함
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+        // ✅ Authorization 헤더(JWT) 허용 필수
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+
+        // ✅ 쿠키 기반 인증이 아니라면 false (권장)
+        config.setAllowCredentials(false);
+
+        // ✅ preflight 캐시(선택)
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
     @Bean
     @Order(0)
     public SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http) throws Exception {
-        //swagger 전용 필터체인
-
+        // swagger 전용 필터체인
         http
                 .securityMatcher(
                         "/swagger-ui.html",
@@ -37,6 +73,8 @@ public class SecurityConfig {
                         "/error",
                         "/favicon.ico"
                 )
+                // ✅ CORS 활성화 (Swagger 체인에도 필요)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
@@ -47,23 +85,22 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //기본 API들용 필터체인
-
+        // 기본 API들용 필터체인
         http
+                // ✅ CORS 활성화 (API 체인에도 필요)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/oauth2/**", "/login/**").permitAll() // 🔥 소셜 로그인 엔드포인트 허용
-//                        .requestMatchers(HttpMethod.GET, "/api/restaurant/**").permitAll() 추후 추가 예정
+                        .requestMatchers("/oauth2/**", "/login/**").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/restaurant/**").permitAll() // 추후
                         .anyRequest().authenticated()
                 )
-                // 🔥 OAuth2 로그인 설정 추가
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserProviderRouter))
                         .successHandler(oAuth2SuccessHandler)
                 )
-                // JWT 필터는 그대로 유지
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
