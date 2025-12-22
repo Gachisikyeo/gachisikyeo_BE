@@ -1,5 +1,6 @@
 package com.example.gachisikyeo_be.app.controller.region;
 
+import com.example.gachisikyeo_be.app.dto.LawDongDto;
 import com.example.gachisikyeo_be.app.service.region.LawDongService;
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
@@ -62,4 +63,13 @@ public class LawDongQueryController {
         return ApiResponseTemplate.success(SuccessCode.LAWDONG_DONG_LIST_SUCCESS, result);
     }
 
+    @GetMapping("/resolve")
+    public ResponseEntity<ApiResponseTemplate<LawDongDto>> resolveRegion(
+            @RequestParam String sido,
+            @RequestParam String sigungu,
+            @RequestParam String dong
+    ) {
+        LawDongDto dto = lawDongService.resolveRegion(sido, sigungu, dong);
+        return ApiResponseTemplate.success(SuccessCode.LAWDONG_RESOLVE_SUCCESS, dto);
+    }
 }
