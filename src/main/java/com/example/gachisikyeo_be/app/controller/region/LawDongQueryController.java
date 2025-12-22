@@ -63,6 +63,9 @@ public class LawDongQueryController {
         return ApiResponseTemplate.success(SuccessCode.LAWDONG_DONG_LIST_SUCCESS, result);
     }
 
+    @Operation(summary = "시도, 시군구, 동으로 지역 얻기", description = "선택한 시/도와 시/군/구, 동으로 설정 지역을 얻기")
+    @ApiResponse(responseCode = "200", description = "LawDong 얻기 성공")
+    @ApiResponse(responseCode = "404", description = "찾는 지역 조회 실패")
     @GetMapping("/resolve")
     public ResponseEntity<ApiResponseTemplate<LawDongDto>> resolveRegion(
             @RequestParam String sido,
