@@ -2,11 +2,13 @@ package com.example.gachisikyeo_be.app.service.groupPurchase;
 
 import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchase;
 import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchaseCreateCommand;
+import com.example.gachisikyeo_be.app.domain.productRegistration.ProductRegistration;
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseRequestDto;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseResponseDto;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.GroupPurchaseListItemResponseDto;
 import com.example.gachisikyeo_be.app.repository.groupPurchase.GroupPurchaseRepository;
+import com.example.gachisikyeo_be.app.repository.productRegistration.ProductRegistrationRepository;
 import com.example.gachisikyeo_be.app.repository.region.LawDongRepository;
 import com.example.gachisikyeo_be.global.code.ErrorCode;
 import com.example.gachisikyeo_be.global.exception.BusinessException;
@@ -26,6 +28,7 @@ public class GroupPurchaseService {
     private final UserRepository userRepository;
     private final LawDongRepository lawDongRepository;
     private final GroupPurchaseRepository groupPurchaseRepository;
+    private final ProductRegistrationRepository productRegistrationRepository;
 
     @Transactional
     public CreateGroupPurchaseResponseDto create(Long hostUserId, Long productId, CreateGroupPurchaseRequestDto req) {
@@ -37,11 +40,17 @@ public class GroupPurchaseService {
             throw new BusinessException(ErrorCode.GROUP_PURCHASE_CREATE_FORBIDDEN);
         }
 
+        // 무결성 검증 추가
+        validateCreateRequest(req);
+
         LawDong region = lawDongRepository.findById(req.getRegionId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.REGION_NOT_FOUND));
 
+        ProductRegistration productRegistration = productRegistrationRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+
         GroupPurchaseCreateCommand cmd = GroupPurchaseCreateCommand.builder()
-                .productId(productId) // PathVariable에서 받은 값 사용
+                .productRegistration(productRegistration) // PathVariable에서 받은 값 사용
                 .hostBuyQuantity(req.getHostBuyQuantity())
                 .targetQuantity(req.getTargetQuantity())
                 .minimumOrderUnit(req.getMinimumOrderUnit())
@@ -62,5 +71,19 @@ public class GroupPurchaseService {
                 .stream()
                 .map(GroupPurchaseListItemResponseDto::from)
                 .toList();
+    }
+
+    private void validateCreateRequest(CreateGroupPurchaseRequestDto req) {
+        int hostBuy = req.getHostBuyQuantity();
+        int target = req.getTargetQuantity();
+        int minUnit = req.getMinimumOrderUnit();
+
+        if (target < hostBuy) {
+            throw new BusinessException(ErrorCode.GROUP_PURCHASE_INVALID_TARGET_QUANTITY);
+        }
+
+        if (minUnit > target) {
+            throw new BusinessException(ErrorCode.GROUP_PURCHASE_INVALID_MINIMUM_ORDER_UNIT);
+        }
     }
 }
