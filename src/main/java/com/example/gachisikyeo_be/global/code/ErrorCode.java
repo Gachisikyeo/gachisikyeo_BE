@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     // 400 Bad Request
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    GROUP_PURCHASE_INVALID_TARGET_QUANTITY(HttpStatus.BAD_REQUEST, "목표 수량보다 호스트가 더 많이 샀습니다."),
+    GROUP_PURCHASE_INVALID_MINIMUM_ORDER_UNIT(HttpStatus.BAD_REQUEST, "목표 수량보다 최소 주문 수량이 높습니다"),
 
     // 401 Unauthorized
     INVALID_CREDENTIAL(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
@@ -23,6 +25,7 @@ public enum ErrorCode {
     // 404 Not Found
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
     REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 지역입니다."),
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다"),
 
     // 409 Conflict
     ALREADY_EXIST_USER(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
