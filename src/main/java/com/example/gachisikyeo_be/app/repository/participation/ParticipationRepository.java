@@ -36,4 +36,15 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     int markFailedForExpiredPending(@Param("threshold") LocalDateTime threshold,
                                     @Param("pending") ParticipationStatus pending,
                                     @Param("failed") ParticipationStatus failed);
+
+    // 결제 화면 조회용(읽기)
+    @Query("""
+        select p
+          from Participation p
+          join fetch p.user u
+          join fetch p.groupPurchase gp
+          join fetch gp.product pr
+         where p.id = :participationId
+    """)
+    Optional<Participation> findByIdWithGroupAndProduct(@Param("participationId") Long participationId);
 }

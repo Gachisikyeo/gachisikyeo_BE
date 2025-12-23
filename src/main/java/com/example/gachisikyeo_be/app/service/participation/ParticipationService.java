@@ -5,6 +5,7 @@ import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchaseStatus;
 import com.example.gachisikyeo_be.app.domain.participation.Participation;
 import com.example.gachisikyeo_be.app.dto.participation.CreateParticipationRequestDto;
 import com.example.gachisikyeo_be.app.dto.participation.CreateParticipationResponseDto;
+import com.example.gachisikyeo_be.app.dto.payment.ParticipationPaymentPageResponseDto;
 import com.example.gachisikyeo_be.app.repository.groupPurchase.GroupPurchaseRepository;
 import com.example.gachisikyeo_be.app.repository.participation.ParticipationRepository;
 import com.example.gachisikyeo_be.global.code.ErrorCode;
@@ -38,6 +39,19 @@ public class ParticipationService {
         Participation saved = savePendingParticipation(gp, user, req, shareAmount);
 
         return CreateParticipationResponseDto.from(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public ParticipationPaymentPageResponseDto getPaymentPage(Long userId, Long participationId) {
+        Participation p = participationRepository.findByIdWithGroupAndProduct(participationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PARTICIPATION_NOT_FOUND));
+
+        // 본인 것만 조회 가능하게 (권장)
+        if (!p.getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.PARTICIPATION_FORBIDDEN);
+        }
+
+        return ParticipationPaymentPageResponseDto.from(p);
     }
 
     private User getUserOrThrow(Long userId) {
