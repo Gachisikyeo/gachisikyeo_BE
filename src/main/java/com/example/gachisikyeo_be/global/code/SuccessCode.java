@@ -33,7 +33,10 @@ public enum SuccessCode {
     // Product
     PRODUCT_CREATED(HttpStatus.CREATED, "상품 등록 성공"),
     FILE_UPLOAD_SUCCESS(HttpStatus.CREATED, "파일 업로드 성공"),
-    FILE_DELETE_SUCCESS(HttpStatus.OK, "파일 삭제 성공");
+    FILE_DELETE_SUCCESS(HttpStatus.OK, "파일 삭제 성공"),
+
+    // Participation
+    PARTICIPATION_CREATED(HttpStatus.CREATED, "공구 참여가 생성되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

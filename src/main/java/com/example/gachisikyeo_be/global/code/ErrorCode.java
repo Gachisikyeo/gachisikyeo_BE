@@ -12,6 +12,10 @@ public enum ErrorCode {
     INVALID_QUANTITY_MIN_ORDER_UNIT(HttpStatus.BAD_REQUEST, "구매 수량이 최소 주문 단위보다 작습니다."),
     GROUP_PURCHASE_INVALID_TARGET_QUANTITY(HttpStatus.BAD_REQUEST, "목표 수량보다 호스트가 더 많이 샀습니다."),
     GROUP_PURCHASE_INVALID_MINIMUM_ORDER_UNIT(HttpStatus.BAD_REQUEST, "목표 수량보다 최소 주문 수량이 높습니다."),
+    GROUP_PURCHASE_NOT_OPEN(HttpStatus.BAD_REQUEST, "모집 중인 공구만 참여할 수 있습니다."),
+    GROUP_PURCHASE_ENDED(HttpStatus.BAD_REQUEST, "마감된 공구는 참여할 수 없습니다."),
+    PRODUCT_PRICE_NOT_SET(HttpStatus.BAD_REQUEST, "상품 가격이 설정되어 있지 않습니다."),
+    GROUP_PURCHASE_TARGET_EXCEEDED(HttpStatus.BAD_REQUEST, "목표 수량을 초과하여 참여할 수 없습니다."),
 
     // 401 Unauthorized
     INVALID_CREDENTIAL(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
