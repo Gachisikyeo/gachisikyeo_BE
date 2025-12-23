@@ -36,7 +36,10 @@ public enum SuccessCode {
     FILE_DELETE_SUCCESS(HttpStatus.OK, "파일 삭제 성공"),
 
     // Participation
-    PARTICIPATION_CREATED(HttpStatus.CREATED, "공구 참여가 생성되었습니다.");
+    PARTICIPATION_CREATED(HttpStatus.CREATED, "공구 참여가 생성되었습니다."),
+
+    // Payment
+    PAYMENT_CONFIRMED(HttpStatus.OK, "결제가 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
