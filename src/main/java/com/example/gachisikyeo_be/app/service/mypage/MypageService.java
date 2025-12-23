@@ -25,17 +25,14 @@ public class MypageService {
 
         LawDong lawDong = user.getLawDong();
 
-        String lawdong = lawDong == null
-                ? null
-                : lawDong.getSido() + " " +
-                lawDong.getSigungu() + " " +
-                lawDong.getDong();
+        String lawdong = lawDong == null ? null : lawDong.getDong();    //시도/시군구/동 다 뜨는 게 아니라 법정동만 떠야 함
+        String userType = user.getUserType().getDescription();  //BUYER면 구매자, SELLER면 사장님
 
         return new MypageResponseDto(
                 user.getNickName(),
                 user.getEmail(),
                 lawdong,
-                user.getUserType()
+                userType
         );
     }
 }

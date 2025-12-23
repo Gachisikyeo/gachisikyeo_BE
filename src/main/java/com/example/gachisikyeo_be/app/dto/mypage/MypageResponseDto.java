@@ -9,13 +9,13 @@ public class MypageResponseDto {
 
     private final String nickname;
     private final String email;
-    private final String lawDong;
-    private final UserType userType;
+    private final String lawDong; //법정동
+    private final String userType; //유저 타입 description
 
-    public MypageResponseDto(String nickname, String email, String lawDong, UserType userType) {
+    public MypageResponseDto(String nickname, String email, String lawDong, String userType) {
         this.nickname = nickname;
         this.email = email;
-        this.lawDong=lawDong;
-        this.userType=userType;
+        this.lawDong = lawDong;
+        this.userType = userType;
     }
 }
