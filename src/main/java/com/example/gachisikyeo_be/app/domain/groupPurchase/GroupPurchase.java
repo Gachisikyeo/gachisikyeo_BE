@@ -106,4 +106,12 @@ public class GroupPurchase extends BaseTimeEntity {
     public boolean isTargetAchieved() {
         return currentQuantity >= targetQuantity;
     }
+
+    public void increaseCurrentQuantity(int addQuantity) {
+        this.currentQuantity += addQuantity;
+
+        if (this.currentQuantity >= this.targetQuantity) {
+            this.status = GroupPurchaseStatus.SUCCESS; // ✅ 즉시 SUCCESS
+        }
+    }
 }
