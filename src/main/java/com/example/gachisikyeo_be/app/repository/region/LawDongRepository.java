@@ -22,4 +22,6 @@ public interface LawDongRepository extends JpaRepository<LawDong, Long> {
     @Query("select distinct l.dong from LawDong l " +
             "where l.sido = :sido and l.sigungu = :sigungu order by l.dong asc")
     List<String> findDongBySidoAndSigungu(String sido, String sigungu);
+
+    Optional<LawDong> findBySidoAndSigunguAndDong(String sido, String sigungu, String dong);
 }
