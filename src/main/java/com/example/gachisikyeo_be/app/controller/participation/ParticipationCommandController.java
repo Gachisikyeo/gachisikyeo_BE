@@ -2,6 +2,7 @@ package com.example.gachisikyeo_be.app.controller.participation;
 
 import com.example.gachisikyeo_be.app.dto.participation.CreateParticipationRequestDto;
 import com.example.gachisikyeo_be.app.dto.participation.CreateParticipationResponseDto;
+import com.example.gachisikyeo_be.app.dto.payment.ParticipationPaymentPageResponseDto;
 import com.example.gachisikyeo_be.app.service.participation.ParticipationService;
 import com.example.gachisikyeo_be.global.code.ErrorCode;
 import com.example.gachisikyeo_be.global.code.SuccessCode;
@@ -30,6 +31,19 @@ public class ParticipationCommandController {
         Long userId = extractUserId(authentication);
         CreateParticipationResponseDto res = participationService.createPending(userId, groupPurchaseId, req);
         return ApiResponseTemplate.success(SuccessCode.PARTICIPATION_CREATED, res);
+    }
+
+    /**
+     * 결제 화면에서 participationId로 결제 정보 조회
+     */
+    @GetMapping("/participations/{participationId}")
+    public ResponseEntity<ApiResponseTemplate<ParticipationPaymentPageResponseDto>> getPaymentPage(
+            @PathVariable Long participationId,
+            Authentication authentication
+    ) {
+        Long userId = extractUserId(authentication);
+        ParticipationPaymentPageResponseDto res = participationService.getPaymentPage(userId, participationId);
+        return ApiResponseTemplate.success(SuccessCode.PARTICIPATION_PAYMENT_PAGE_FETCHED, res);
     }
 
     private Long extractUserId(Authentication authentication) {

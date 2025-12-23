@@ -37,6 +37,7 @@ public enum SuccessCode {
 
     // Participation
     PARTICIPATION_CREATED(HttpStatus.CREATED, "공구 참여가 생성되었습니다."),
+    PARTICIPATION_PAYMENT_PAGE_FETCHED(HttpStatus.OK, "결제 화면 정보를 조회했습니다."),
 
     // Payment
     PAYMENT_CONFIRMED(HttpStatus.OK, "결제가 완료되었습니다.");
