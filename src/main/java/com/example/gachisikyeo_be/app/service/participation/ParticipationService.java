@@ -31,7 +31,7 @@ public class ParticipationService {
         User user = getUserOrThrow(userId);
         GroupPurchase gp = getGroupPurchaseOrThrow(groupPurchaseId);
 
-        validateCreatable(gp, userId, req.getQuantity());
+        validateCreatable(groupPurchaseId, gp, userId, req.getQuantity());
 
         int shareAmount = calculateShareAmount(gp, req.getQuantity());
 
@@ -50,10 +50,10 @@ public class ParticipationService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.GROUP_PURCHASE_NOT_FOUND));
     }
 
-    private void validateCreatable(GroupPurchase gp, Long userId, int quantity) {
+    private void validateCreatable(Long groupPurchaseId, GroupPurchase gp, Long userId, int quantity) {
         validateGroupPurchaseOpen(gp); // 공구가 열렸는지
         validateNotEnded(gp); // 공구가 마감이 됐는지
-        validateNotDuplicated(gp.getId(), userId); // 공구에 이미 참여를 했는지
+        validateNotDuplicated(groupPurchaseId, userId); // 공구에 이미 참여를 했는지
         validateMinimumOrderUnit(gp, quantity); // 주문 최소 수량을 넘었는지
         validateNotExceedTarget(gp, quantity); // 목표 수량을 넘겼는지
     }
