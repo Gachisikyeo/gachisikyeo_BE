@@ -32,8 +32,12 @@ public enum SuccessCode {
     // Product
     PRODUCT_CREATED(HttpStatus.CREATED, "상품 등록 성공"),
     FILE_UPLOAD_SUCCESS(HttpStatus.CREATED, "파일 업로드 성공"),
-    FILE_DELETE_SUCCESS(HttpStatus.OK, "파일 삭제 성공");
+    FILE_DELETE_SUCCESS(HttpStatus.OK, "파일 삭제 성공"),
+    PRODUCT_LIST_SUCCESS(HttpStatus.OK, "상품 목록 조회 성공"),
+    PRODUCT_DETAIL_SUCCESS(HttpStatus.OK, "상품 상세 조회 성공"),
 
+    // SellerDashboard
+    SELLER_DASHBOARD_SUCCESS(HttpStatus.OK,"총 판매 상품 수량 조회 성공");
     private final HttpStatus httpStatus;
     private final String message;
 }
