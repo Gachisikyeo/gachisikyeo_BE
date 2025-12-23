@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum UserType {
     SELLER("사장님"),
-    BUYER("일반 구매자");
+    BUYER("구매자");
 
     private final String description;
 
