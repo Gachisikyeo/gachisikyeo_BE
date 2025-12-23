@@ -2,6 +2,8 @@ package com.example.gachisikyeo_be.app.repository.groupPurchase;
 
 import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchase;
 import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchaseStatus;
+import com.example.gachisikyeo_be.app.domain.participation.Participation;
+import com.example.gachisikyeo_be.app.domain.participation.ParticipationStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -58,4 +60,27 @@ public interface GroupPurchaseRepository extends JpaRepository<GroupPurchase, Lo
      where gp.id = :groupPurchaseId
 """)
     Optional<GroupPurchase> findByIdForUpdate(@Param("groupPurchaseId") Long groupPurchaseId);
+
+    // 결제 화면 조회용(읽기)
+    @Query("""
+        select p
+          from Participation p
+          join fetch p.user u
+          join fetch p.groupPurchase gp
+          join fetch gp.product pr
+         where p.id = :participationId
+    """)
+    Optional<Participation> findByIdWithGroupAndProduct(@Param("participationId") Long participationId);
+
+    // 만료 처리
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+        update Participation p
+           set p.status = :failed
+         where p.status = :pending
+           and p.createdAt <= :threshold
+    """)
+    int markFailedForExpiredPending(@Param("threshold") LocalDateTime threshold,
+                                    @Param("pending") ParticipationStatus pending,
+                                    @Param("failed") ParticipationStatus failed);
 }
