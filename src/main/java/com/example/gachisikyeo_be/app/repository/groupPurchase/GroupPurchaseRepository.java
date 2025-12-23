@@ -2,8 +2,10 @@ package com.example.gachisikyeo_be.app.repository.groupPurchase;
 
 import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchase;
 import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchaseStatus;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GroupPurchaseRepository extends JpaRepository<GroupPurchase, Long> {
@@ -46,4 +49,13 @@ public interface GroupPurchaseRepository extends JpaRepository<GroupPurchase, Lo
     int markFailedForEnded(@Param("now") LocalDateTime now,
                            @Param("openStatus") GroupPurchaseStatus openStatus,
                            @Param("failedStatus") GroupPurchaseStatus failedStatus);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+    select gp
+      from GroupPurchase gp
+      join fetch gp.product pr
+     where gp.id = :groupPurchaseId
+""")
+    Optional<GroupPurchase> findByIdForUpdate(@Param("groupPurchaseId") Long groupPurchaseId);
 }
