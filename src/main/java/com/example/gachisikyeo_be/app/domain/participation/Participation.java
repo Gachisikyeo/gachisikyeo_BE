@@ -78,6 +78,14 @@ public class Participation {
         return new Participation(groupPurchase, user, quantity, buyerContact, shareAmount);
     }
 
+    public void confirm() {
+        this.status = ParticipationStatus.CONFIRMED;
+    }
+
+    public void fail() {
+        this.status = ParticipationStatus.FAILED;
+    }
+
     public void cancel() {
         this.status = ParticipationStatus.CANCELED;
     }
