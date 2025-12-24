@@ -42,7 +42,7 @@ public enum SuccessCode {
     PARTICIPATION_PAYMENT_PAGE_FETCHED(HttpStatus.OK, "결제 화면 정보를 조회했습니다."),
 
     // Payment
-    PAYMENT_CONFIRMED(HttpStatus.OK, "결제가 완료되었습니다.");
+    PAYMENT_CONFIRMED(HttpStatus.OK, "결제가 완료되었습니다."),
 
     // SellerDashboard
     SELLER_DASHBOARD_SUCCESS(HttpStatus.OK,"총 판매 상품 수량 조회 성공");

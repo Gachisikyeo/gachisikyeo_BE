@@ -1,6 +1,6 @@
 package com.example.gachisikyeo_be.app.domain.groupPurchase;
 
-import com.example.gachisikyeo_be.app.domain.productRegistration.ProductRegistration;
+import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
 import com.example.gachisikyeo_be.global.common.BaseTimeEntity;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
@@ -37,7 +37,7 @@ public class GroupPurchase extends BaseTimeEntity {
     // Product 엔티티가 아직 없으니 우선 FK 값만 보관   private Product product; 로 구현하셈
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productRegistration_id")
-    private ProductRegistration product;
+    private Product product;
 
     // 총대(=host). User와 연관관계
     @ManyToOne(fetch = FetchType.LAZY)

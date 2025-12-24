@@ -2,7 +2,7 @@ package com.example.gachisikyeo_be.app.service.groupPurchase;
 
 import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchase;
 import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchaseCreateCommand;
-import com.example.gachisikyeo_be.app.domain.productRegistration.ProductRegistration;
+import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseRequestDto;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseResponseDto;
@@ -46,7 +46,7 @@ public class GroupPurchaseService {
         LawDong region = lawDongRepository.findById(req.getRegionId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.REGION_NOT_FOUND));
 
-        ProductRegistration productRegistration = productRegistrationRepository.findById(productId)
+        Product productRegistration = productRegistrationRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         GroupPurchaseCreateCommand cmd = GroupPurchaseCreateCommand.builder()
