@@ -41,7 +41,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "https://gachisikyeo.com", // TODO: 프론트 배포 도메인
                 "http://localhost:3000",       // React(CRA/Next)
-                "http://localhost:5173"        // React(Vite)
+                "http://localhost:5174"        // React(Vite)
         ));
 
         // ✅ 프리플라이트 포함

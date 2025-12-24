@@ -20,6 +20,7 @@ public enum SuccessCode {
     LAWDONG_SIDO_LIST_SUCCESS(HttpStatus.OK, "시도 목록 조회 성공"),                  // /law-dong/sido
     LAWDONG_SIGUNGU_LIST_SUCCESS(HttpStatus.OK, "시군구 목록 조회 성공"),             // /law-dong/sigungu
     LAWDONG_DONG_LIST_SUCCESS(HttpStatus.OK, "읍면동 목록 조회 성공"),
+    LAWDONG_RESOLVE_SUCCESS(HttpStatus.OK, "지역 조회 성공"),
 
     // Business
     BUSINESS_ENROLL_SUCCESS(HttpStatus.CREATED, "상점 등록 성공"),
@@ -35,6 +36,13 @@ public enum SuccessCode {
     FILE_DELETE_SUCCESS(HttpStatus.OK, "파일 삭제 성공"),
     PRODUCT_LIST_SUCCESS(HttpStatus.OK, "상품 목록 조회 성공"),
     PRODUCT_DETAIL_SUCCESS(HttpStatus.OK, "상품 상세 조회 성공"),
+
+    // Participation
+    PARTICIPATION_CREATED(HttpStatus.CREATED, "공구 참여가 생성되었습니다."),
+    PARTICIPATION_PAYMENT_PAGE_FETCHED(HttpStatus.OK, "결제 화면 정보를 조회했습니다."),
+
+    // Payment
+    PAYMENT_CONFIRMED(HttpStatus.OK, "결제가 완료되었습니다.");
 
     // SellerDashboard
     SELLER_DASHBOARD_SUCCESS(HttpStatus.OK,"총 판매 상품 수량 조회 성공");

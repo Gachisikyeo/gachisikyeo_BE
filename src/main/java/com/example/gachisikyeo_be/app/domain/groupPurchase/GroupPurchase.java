@@ -1,5 +1,6 @@
 package com.example.gachisikyeo_be.app.domain.groupPurchase;
 
+import com.example.gachisikyeo_be.app.domain.productRegistration.ProductRegistration;
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
 import com.example.gachisikyeo_be.global.common.BaseTimeEntity;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
@@ -34,8 +35,9 @@ public class GroupPurchase extends BaseTimeEntity {
     private Long id;
 
     // Product 엔티티가 아직 없으니 우선 FK 값만 보관   private Product product; 로 구현하셈
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "productRegistration_id")
+    private ProductRegistration product;
 
     // 총대(=host). User와 연관관계
     @ManyToOne(fetch = FetchType.LAZY)
@@ -87,7 +89,7 @@ public class GroupPurchase extends BaseTimeEntity {
 
     public static GroupPurchase create(User hostUser, LawDong region, GroupPurchaseCreateCommand cmd) {
         return GroupPurchase.builder()
-                .productId(cmd.getProductId())
+                .product(cmd.getProductRegistration())
                 .hostUser(hostUser)
                 .region(region)
                 .hostBuyQuantity(cmd.getHostBuyQuantity())
@@ -103,5 +105,13 @@ public class GroupPurchase extends BaseTimeEntity {
 
     public boolean isTargetAchieved() {
         return currentQuantity >= targetQuantity;
+    }
+
+    public void increaseCurrentQuantity(int addQuantity) {
+        this.currentQuantity += addQuantity;
+
+        if (this.currentQuantity >= this.targetQuantity) {
+            this.status = GroupPurchaseStatus.SUCCESS; // ✅ 즉시 SUCCESS
+        }
     }
 }
