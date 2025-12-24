@@ -12,6 +12,13 @@ public class MypageGroupPurchaseDto {
     private Long groupPurchaseId;
     private String productName;
     private String imageUrl;
+    private int totalPrice;
     private int unitPrice;
+    private int quantity;
+    private String pickupLocation;
+    private LocalDateTime pickupTime;
+//    private String productName;
+//    private String imageUrl;
+//    private int unitPrice;
     private LocalDateTime createdAt;
 }
