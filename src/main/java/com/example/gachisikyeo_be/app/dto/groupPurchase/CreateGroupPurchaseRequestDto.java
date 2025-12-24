@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class CreateGroupPurchaseRequestDto {
 
     @NotNull(message = "regionId는 필수입니다.")
-    private Long regionId;
+    private String regionId;
 
     @Min(value = 1, message = "hostBuyQuantity는 1 이상이어야 합니다.")
     private int hostBuyQuantity;

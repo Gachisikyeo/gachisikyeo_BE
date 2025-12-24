@@ -45,7 +45,7 @@ public class AuthService {
             throw new IllegalStateException("이미 가입된 이메일입니다.");
         }
 
-        LawDong lawDong = lawDongRepository.findById(request.getLawDongId())
+        LawDong lawDong = lawDongRepository.findByLawCode(request.getLawDongId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 지역입니다."));
 
         LawDongDto lawDongDto = LawDongDto.from(lawDong);
@@ -88,7 +88,7 @@ public class AuthService {
             throw new AuthException(ErrorCode.ALREADY_EXIST_USER);
         }
 
-        LawDong lawDong = lawDongRepository.findById(normalUserSignupRequestDto.getLawDongId())
+        LawDong lawDong = lawDongRepository.findByLawCode(normalUserSignupRequestDto.getLawDongId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 지역입니다."));
 
         NormalUserCreateCommand normalUserCreateCommand = NormalUserCreateCommand.builder()

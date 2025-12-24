@@ -36,7 +36,7 @@ public class GroupPurchase extends BaseTimeEntity {
 
     // Product 엔티티가 아직 없으니 우선 FK 값만 보관   private Product product; 로 구현하셈
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productRegistration_id")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     // 총대(=host). User와 연관관계
