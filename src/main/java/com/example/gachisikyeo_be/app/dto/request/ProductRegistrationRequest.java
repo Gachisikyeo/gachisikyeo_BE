@@ -27,13 +27,8 @@ public class ProductRegistrationRequest {
     private int unitQuantity;
 
     @NotBlank
-    private String imageUrl;
-
-    @NotBlank
     private String descriptionTitle;
 
     @NotBlank
     private String description;
 }
-
-
