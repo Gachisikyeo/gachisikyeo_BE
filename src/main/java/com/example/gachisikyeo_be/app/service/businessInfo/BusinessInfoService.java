@@ -7,7 +7,9 @@ import com.example.gachisikyeo_be.global.users.domain.auth.User;
 import com.example.gachisikyeo_be.global.users.domain.auth.UserType;
 import com.example.gachisikyeo_be.global.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,25 +22,30 @@ public class BusinessInfoService {
                                BusinessInfoRequest request) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "유저 없음"
+                        )
+                );
 
         if (user.getUserType() != UserType.SELLER) {
-            throw new IllegalStateException("SELLER만 등록 가능");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "SELLER만 등록 가능"
+            );
         }
 
-        if (businessInfoRepository.existsByUser(user)) {
-            throw new IllegalStateException("이미 사업자 등록됨");
-        }
-
-        BusinessInfo businessInfo = new BusinessInfo(
-                user,
-                request.getBusinessNumber(),
-                request.getStoreName(),
-                request.getCeoName(),
-                request.getAddress()
-        );
-
-        return businessInfoRepository.save(businessInfo);
+        return businessInfoRepository.findByUser(user)
+                .orElseGet(() -> {
+                    BusinessInfo businessInfo = new BusinessInfo(
+                            user,
+                            request.getBusinessNumber(),
+                            request.getStoreName(),
+                            request.getCeoName(),
+                            request.getAddress()
+                    );
+                    return businessInfoRepository.save(businessInfo);
+                });
     }
 }
-

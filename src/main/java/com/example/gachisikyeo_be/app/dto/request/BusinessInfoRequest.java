@@ -5,9 +5,11 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Schema(description = "사업자 정보 등록 요청 DTO")
 @Getter
+@Setter
 @NoArgsConstructor
 public class BusinessInfoRequest {
 

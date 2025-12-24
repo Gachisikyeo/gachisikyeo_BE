@@ -1,6 +1,6 @@
 package com.example.gachisikyeo_be.app.dto.response;
 
-import com.example.gachisikyeo_be.app.domain.productRegistration.ProductRegistration;
+import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,8 +14,9 @@ public class ProductRegistrationResponse {
     private int stockQuantity;
     private String imageUrl;
     private int unitQuantity;
+    private long unitPrice;
 
-    public static ProductRegistrationResponse from(ProductRegistration product) {
+    public static ProductRegistrationResponse from(Product product) {
         return ProductRegistrationResponse.builder()
                 .id(product.getId())
                 .productName(product.getProductName())
@@ -23,6 +24,7 @@ public class ProductRegistrationResponse {
                 .stockQuantity(product.getStockQuantity())
                 .unitQuantity(product.getUnitQuantity())
                 .imageUrl(product.getImageUrl())
+                .unitPrice(product.getPrice() / product.getUnitQuantity())
                 .build();
     }
 }

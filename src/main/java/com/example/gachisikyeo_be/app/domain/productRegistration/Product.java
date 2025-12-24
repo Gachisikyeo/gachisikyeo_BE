@@ -1,6 +1,7 @@
 package com.example.gachisikyeo_be.app.domain.productRegistration;
 
 import com.example.gachisikyeo_be.app.domain.businessInfo.BusinessInfo;
+import com.example.gachisikyeo_be.global.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,13 +19,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ProductRegistration {
+public class Product extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 이 상품을 등록한 판매자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_info_id", nullable = false)
     private BusinessInfo businessInfo;
@@ -34,29 +34,34 @@ public class ProductRegistration {
     private ProductCategory category; //카테고리
 
     @Column(nullable = false)
-    private String productName; //상품이름
+    private String productName; //상품명
 
     @Column(nullable = false)
-    private long price; //가격
+    private long price; //상품가격
 
     @Column(nullable = false)
-    private int stockQuantity; // 재고수량
+    private int stockQuantity; //재고수량
 
     @Column(nullable = false)
-    private int unitQuantity; // 구성수량
-
-
-    @Column(nullable = false)
-    private String imageUrl; // 업로드 이미지 url
+    private int unitQuantity; //구성수량
 
     @Column(nullable = false)
-    private String descriptionTitle; // 설명 제목(요약)
+    private long unitPrice; //개당가격
+
+    @Column(nullable = false)
+    private String imageUrl; //이미지 url
+
+    @Column(nullable = false)
+    private String descriptionTitle; // 설명제목
 
     @Lob
     @Column(nullable = false)
-    private String description; // 자세한 설명(본문)
+    private String description; //자세한 설명
 
-    public static ProductRegistration create(
+    @Column(nullable = false)
+    private long viewCount; // 조회수
+
+    public static Product create(
             BusinessInfo businessInfo,
             ProductCategory category,
             String productName,
@@ -67,15 +72,24 @@ public class ProductRegistration {
             String descriptionTitle,
             String description
     ) {
-        ProductRegistration product = new ProductRegistration();
+        Product product = new Product();
         product.businessInfo = businessInfo;
         product.category = category;
         product.productName = productName;
         product.price = price;
         product.stockQuantity = stockQuantity;
+        product.unitQuantity = unitQuantity;
+        product.unitPrice = price / unitQuantity;
         product.imageUrl = imageUrl;
         product.descriptionTitle = descriptionTitle;
         product.description = description;
+        product.viewCount = 0L;
+
         return product;
     }
+
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+
 }
