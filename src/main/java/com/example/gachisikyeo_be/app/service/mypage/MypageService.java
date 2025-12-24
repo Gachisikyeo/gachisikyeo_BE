@@ -25,7 +25,7 @@ public class MypageService {
     private final UserRepository userRepository;
     private final ParticipationRepository participationRepository;
 
-    public MypageResponseDto getMypage(Long userId) {
+    public MypageResponseDto getMypage(Long userId) {   //마이페이지 메인화면
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthException(ErrorCode.NOT_FOUND_USER));
@@ -66,7 +66,7 @@ public class MypageService {
         );
     }
 
-    public CompletedGroupPurchaseDetailDto getCompletedDetail(
+    public CompletedGroupPurchaseDetailDto getCompletedDetail(  //완료된 공구 상세페이지
             Long userId,
             Long participationId
     ) {
@@ -81,25 +81,27 @@ public class MypageService {
         GroupPurchase gp = participation.getGroupPurchase();
 
         return new CompletedGroupPurchaseDetailDto(
-                gp.getProduct().getName(),
-                gp.getProduct().getImageUrl(),
-                gp.getTargetQuantity() * (int) gp.getProduct().getPrice(),
-                (int) gp.getProduct().getPrice(),
-                participation.getQuantity(),
-                participation.getId(),
-                participation.getUser().getNickName(),
-                gp.getLeader().getUser().getNickName(),
-                participation.getShareAmount()
+                gp.getProduct().getName(),  //상품명
+                gp.getProduct().getImageUrl(),  //상품이미지
+                gp.getTargetQuantity() * (int) gp.getProduct().getPrice(),  //상품총가격
+                (int) gp.getProduct().getPrice(),   //상품 개당가격
+                participation.getQuantity(),    //내가 구매한 수량
+                participation.getId(),  //내 아이디
+                participation.getUser().getNickName(),  //내 닉네임
+                gp.getLeader().getUser().getNickName(), //총대 닉네임
+                participation.getShareAmount(),
+                gp.getPickupLocation(),
+                gp.getPickupAt()
         );
     }
 
     private MypageGroupPurchaseDto toGroupPurchaseDto(Participation p) {
         return new MypageGroupPurchaseDto(
-                p.getGroupPurchase().getId(),
-                p.getGroupPurchase().getProduct().getName(),
-                p.getGroupPurchase().getProduct().getImageUrl(),
-                (int) p.getGroupPurchase().getProduct().getPrice(),
-                p.getGroupPurchase().getCreatedAt()
+                p.getGroupPurchase().getId(),   //공구 아이디
+                p.getGroupPurchase().getProduct().getName(),    //상품명
+                p.getGroupPurchase().getProduct().getImageUrl(),    //상품 이미지
+                (int) p.getGroupPurchase().getProduct().getPrice(), //상품 개당가격
+                p.getGroupPurchase().getCreatedAt() //공구 생성 시간
         );
     }
 }

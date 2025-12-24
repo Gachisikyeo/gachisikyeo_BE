@@ -1,5 +1,6 @@
 package com.example.gachisikyeo_be.app.controller.mypage;
 
+import com.example.gachisikyeo_be.app.dto.mypage.CompletedGroupPurchaseDetailDto;
 import com.example.gachisikyeo_be.app.dto.mypage.MypageResponseDto;
 import com.example.gachisikyeo_be.app.service.mypage.MypageService;
 import com.example.gachisikyeo_be.global.code.ErrorCode;
