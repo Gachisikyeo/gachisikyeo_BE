@@ -21,5 +21,5 @@ public class SocialSignupRequestDto {
     private UserType userType;  // SELLER / BUYER
 
     @Schema(description = "법정동 ID(지역 선택 값)", example = "1")
-    private Long lawDongId;     // 지역 선택 값
+    private String lawDongId;     // 지역 선택 값
 }

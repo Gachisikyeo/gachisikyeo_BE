@@ -43,7 +43,7 @@ public class GroupPurchaseService {
         // 무결성 검증 추가
         validateCreateRequest(req);
 
-        LawDong region = lawDongRepository.findById(req.getRegionId())
+        LawDong region = lawDongRepository.findByLawCode(req.getRegionId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.REGION_NOT_FOUND));
 
         Product productRegistration = productRegistrationRepository.findById(productId)

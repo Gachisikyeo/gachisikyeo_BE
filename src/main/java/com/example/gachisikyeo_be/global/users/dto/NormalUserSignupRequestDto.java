@@ -34,5 +34,5 @@ public class NormalUserSignupRequestDto {
     private UserType userType;
 
     @Schema(description = "법정동 ID", example = "1")
-    private Long lawDongId;
+    private String lawDongId;
 }

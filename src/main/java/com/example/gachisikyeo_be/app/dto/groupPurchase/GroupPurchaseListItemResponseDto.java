@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class GroupPurchaseListItemResponseDto {
     private Long groupPurchaseId;
 
-    private Long regionId;
+    private String regionId;
     private String regionName;
 
     private Long hostUserId;
@@ -27,7 +27,7 @@ public class GroupPurchaseListItemResponseDto {
     public static GroupPurchaseListItemResponseDto from(GroupPurchase gp) {
         return GroupPurchaseListItemResponseDto.builder()
                 .groupPurchaseId(gp.getId())
-                .regionId(gp.getRegion().getId())
+                .regionId(gp.getRegion().getLawCode())
                 .regionName(gp.getRegion().getSido() + " " + gp.getRegion().getSigungu() + " " + gp.getRegion().getDong())
                 .hostUserId(gp.getHostUser().getId())
                 .userNickName(gp.getHostUser().getNickName())
