@@ -42,7 +42,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "https://gachisikyeo.com", // TODO: 프론트 배포 도메인
                 "http://localhost:3000",       // React(CRA/Next)
-                "http://localhost:5174"        // React(Vite)
+                "http://localhost:5173"        // React(Vite)
         ));
 
         // ✅ 프리플라이트 포함
@@ -95,7 +95,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,
+                        .requestMatchers(HttpMethod.GET,"/law-dong/**",
                                 "/sido", "/sigungu", "/eupmyeondong",
                                 "/api/regions/**", "/api/lawdong/**"
                         ).permitAll()
