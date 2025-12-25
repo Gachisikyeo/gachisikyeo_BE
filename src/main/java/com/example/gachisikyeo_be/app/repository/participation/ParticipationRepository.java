@@ -4,6 +4,8 @@ import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchaseStatus;
 import com.example.gachisikyeo_be.app.domain.participation.Participation;
 import com.example.gachisikyeo_be.app.domain.participation.ParticipationStatus;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
@@ -60,5 +62,5 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
           and gp.status = :status
         order by gp.createdAt asc
     """)
-    List<Participation> findByUserAndGroupPurchaseStatus(@Param("userId") Long userId, @Param("status") GroupPurchaseStatus status);
+    Page<Participation> findByUserAndGroupPurchaseStatus(@Param("userId") Long userId, @Param("status") GroupPurchaseStatus status, Pageable pageable);
 }

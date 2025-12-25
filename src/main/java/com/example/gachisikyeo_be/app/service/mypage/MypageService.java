@@ -14,6 +14,8 @@ import com.example.gachisikyeo_be.global.exception.BusinessException;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
 import com.example.gachisikyeo_be.global.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +29,7 @@ public class MypageService {
     private final UserRepository userRepository;
     private final ParticipationRepository participationRepository;
 
-    public MypageResponseDto getMypage(Long userId) {   //마이페이지 메인화면
+    public MypageResponseDto getMypage(Long userId, Pageable completedPg, Pageable ongoingPg) {   //마이페이지 메인화면
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthException(ErrorCode.NOT_FOUND_USER));
@@ -38,25 +40,23 @@ public class MypageService {
         String lawdong = lawDong == null ? null : lawDong.getDong();    //시도/시군구/동 다 뜨는 게 아니라 법정동만 떠야 함
         String userType = user.getUserType().getDescription();  //BUYER면 구매자, SELLER면 사장님
 
-        List<MypageGroupPurchaseDto> completed =    //완료된 공구의 경우
+        Page<MypageGroupPurchaseDto> completed =    //완료된 공구의 경우
                 participationRepository
                         .findByUserAndGroupPurchaseStatus(
                                 userId,
-                                GroupPurchaseStatus.SUCCESS
+                                GroupPurchaseStatus.SUCCESS,
+                                completedPg
                         )
-                        .stream()
-                        .map(this::toGroupPurchaseDto)
-                        .toList();
+                        .map(this::toGroupPurchaseDto);
 
-        List<MypageGroupPurchaseDto> ongoing =    //참여 중인 공구의 경우
+        Page<MypageGroupPurchaseDto> ongoing =    //참여 중인 공구의 경우
                 participationRepository
                         .findByUserAndGroupPurchaseStatus(
                                 userId,
-                                GroupPurchaseStatus.OPEN
+                                GroupPurchaseStatus.OPEN,
+                                ongoingPg
                         )
-                        .stream()
-                        .map(this::toGroupPurchaseDto)
-                        .toList();
+                        .map(this::toGroupPurchaseDto);
 
         return new MypageResponseDto(
                 user.getNickName(),
