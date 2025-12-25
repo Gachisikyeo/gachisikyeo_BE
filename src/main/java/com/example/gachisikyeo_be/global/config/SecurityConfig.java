@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -39,9 +40,9 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "https://gachisikyeo.com", // TODO: 프론트 배포 도메인
+                "https://gachisikyeo.vercel.app", // TODO: 프론트 배포 도메인
                 "http://localhost:3000",       // React(CRA/Next)
-                "http://localhost:5174"        // React(Vite)
+                "http://localhost:5173"        // React(Vite)
         ));
 
         // ✅ 프리플라이트 포함
@@ -94,6 +95,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/law-dong/**",
+                                "/sido", "/sigungu", "/eupmyeondong",
+                                "/api/regions/**", "/api/lawdong/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // .requestMatchers(HttpMethod.GET, "/api/restaurant/**").permitAll() // 추후
                         .anyRequest().authenticated()
                 )
