@@ -40,7 +40,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "https://gachisikyeo.com", // TODO: 프론트 배포 도메인
+                "https://gachisikyeo.vercel.app", // TODO: 프론트 배포 도메인
                 "http://localhost:3000",       // React(CRA/Next)
                 "http://localhost:5173"        // React(Vite)
         ));
@@ -99,6 +99,7 @@ public class SecurityConfig {
                                 "/sido", "/sigungu", "/eupmyeondong",
                                 "/api/regions/**", "/api/lawdong/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // .requestMatchers(HttpMethod.GET, "/api/restaurant/**").permitAll() // 추후
                         .anyRequest().authenticated()
                 )
