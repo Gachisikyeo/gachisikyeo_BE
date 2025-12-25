@@ -1,15 +1,20 @@
 package com.example.gachisikyeo_be.app.repository.participation;
 
+import com.example.gachisikyeo_be.app.domain.groupPurchase.GroupPurchaseStatus;
 import com.example.gachisikyeo_be.app.domain.participation.Participation;
 import com.example.gachisikyeo_be.app.domain.participation.ParticipationStatus;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
@@ -37,7 +42,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
                                     @Param("pending") ParticipationStatus pending,
                                     @Param("failed") ParticipationStatus failed);
 
-    // 결제 화면 조회용(읽기)
+    // 결제 화면 조회용(읽기), 마이페이지 공구 조회하는 데도 사용함
     @Query("""
         select p
           from Participation p
@@ -47,4 +52,15 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
          where p.id = :participationId
     """)
     Optional<Participation> findByIdWithGroupAndProduct(@Param("participationId") Long participationId);
+
+    @Query("""
+        select p
+        from Participation p
+        join fetch p.groupPurchase gp
+        join fetch gp.product pr
+        where p.user.id = :userId
+          and gp.status = :status
+        order by gp.createdAt asc
+    """)
+    Page<Participation> findByUserAndGroupPurchaseStatus(@Param("userId") Long userId, @Param("status") GroupPurchaseStatus status, Pageable pageable);
 }
