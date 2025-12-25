@@ -87,6 +87,10 @@ public class PaymentService {
         participation.confirm();
         gp.increaseCurrentQuantity(qty); // ✅ current 증가 + target 달성 즉시 SUCCESS
 
+        if (gp.getStatus() == GroupPurchaseStatus.SUCCESS) {
+            gp.getProduct().decreaseStockByOneBox();
+        }
+
         return ConfirmPaymentResponseDto.from(payment);
     }
 }

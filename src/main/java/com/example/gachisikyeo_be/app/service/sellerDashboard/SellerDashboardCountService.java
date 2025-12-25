@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SellerDashboardService {
+public class SellerDashboardCountService {
 
     private final BusinessInfoRepository businessInfoRepository;
     private final ProductRegistrationRepository productRepository;

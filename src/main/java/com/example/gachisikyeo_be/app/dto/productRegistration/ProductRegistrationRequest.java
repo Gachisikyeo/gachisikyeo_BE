@@ -1,4 +1,4 @@
-package com.example.gachisikyeo_be.app.dto.request;
+package com.example.gachisikyeo_be.app.dto.productRegistration;
 
 import com.example.gachisikyeo_be.app.domain.productRegistration.ProductCategory;
 import jakarta.validation.constraints.Min;

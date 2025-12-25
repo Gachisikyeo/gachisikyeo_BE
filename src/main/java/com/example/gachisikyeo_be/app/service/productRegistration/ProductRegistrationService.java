@@ -3,16 +3,16 @@ package com.example.gachisikyeo_be.app.service.productRegistration;
 import com.example.gachisikyeo_be.app.domain.businessInfo.BusinessInfo;
 import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import com.example.gachisikyeo_be.app.domain.productRegistration.ProductCategory;
-import com.example.gachisikyeo_be.app.dto.request.ProductRegistrationRequest;
+import com.example.gachisikyeo_be.app.dto.productRegistration.ProductRegistrationRequest;
 import com.example.gachisikyeo_be.app.repository.businessInfo.BusinessInfoRepository;
 import com.example.gachisikyeo_be.app.repository.productRegistration.ProductRegistrationRepository;
 import com.example.gachisikyeo_be.app.service.awsS3.AwsS3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,18 +50,28 @@ public class ProductRegistrationService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getMyProducts(Long userId) {
-
+    public Page<Product> getMyProducts(
+            Long userId,
+            Pageable pageable
+    ) {
         BusinessInfo businessInfo = businessInfoRepository
                 .findByUser_Id(userId)
                 .orElseThrow(() -> new IllegalStateException("사업자 정보 없음"));
 
-        return productRepository.findByBusinessInfo(businessInfo);
+        return productRepository.findByBusinessInfo(businessInfo, pageable);
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Product> getProductsByCategory(
+            ProductCategory category,
+            Pageable pageable
+    ) {
+        return productRepository.findByCategory(category, pageable);
     }
 
     @Transactional
@@ -72,16 +82,4 @@ public class ProductRegistrationService {
         product.increaseViewCount();
         return product;
     }
-
-    @Transactional(readOnly = true)
-    public List<Product> getProductsOrderByViewCount() {
-        return productRepository.findAllByOrderByViewCountDesc();
-    }
-
-    @Transactional(readOnly = true)
-    public List<Product> getProductsByCategoryOrderByCreatedAt(ProductCategory category) {
-        return productRepository.findByCategoryOrderByCreatedAtDesc(category);
-    }
-
-
 }

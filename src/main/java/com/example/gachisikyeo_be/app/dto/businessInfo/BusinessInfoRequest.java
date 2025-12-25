@@ -1,4 +1,4 @@
-package com.example.gachisikyeo_be.app.dto.request;
+package com.example.gachisikyeo_be.app.dto.businessInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;

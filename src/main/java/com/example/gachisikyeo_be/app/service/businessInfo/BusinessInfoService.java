@@ -1,7 +1,7 @@
 package com.example.gachisikyeo_be.app.service.businessInfo;
 
 import com.example.gachisikyeo_be.app.domain.businessInfo.BusinessInfo;
-import com.example.gachisikyeo_be.app.dto.request.BusinessInfoRequest;
+import com.example.gachisikyeo_be.app.dto.businessInfo.BusinessInfoRequest;
 import com.example.gachisikyeo_be.app.repository.businessInfo.BusinessInfoRepository;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
 import com.example.gachisikyeo_be.global.users.domain.auth.UserType;
