@@ -36,15 +36,19 @@ public class MypageController {
     @GetMapping("/main")
     public MypageResponseDto getMypage( //마이페이지의 메인화면
             @AuthenticationPrincipal String userId,
-                                        @RequestParam(defaultValue = "0") int completedPage,
-                                        @RequestParam(defaultValue = "0") int ongoingPage
+                                        @RequestParam(defaultValue = "false") boolean completed,
+                                        @RequestParam(defaultValue = "false") boolean ongoing
     ) {
         if (userId == null) {
             throw new AuthException(ErrorCode.AUTH_REQUIRED); //인증 필요한 유저
         }
 
-        Pageable completedPg = PageRequest.of(completedPage, 1);
-        Pageable ongoingPg = PageRequest.of(ongoingPage, 3);
+        Pageable completedPg = completed
+                ? PageRequest.of(0, Integer.MAX_VALUE)  //전체
+                : PageRequest.of(0, 1); //최초 1개
+        Pageable ongoingPg = ongoing
+                ?PageRequest.of(0, Integer.MAX_VALUE)   //전체
+                : PageRequest.of(0, 3); //최초 3개
 
         return mypageService.getMypage(
                 Long.parseLong(userId),
