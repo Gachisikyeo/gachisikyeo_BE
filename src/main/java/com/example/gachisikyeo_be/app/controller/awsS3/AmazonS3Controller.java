@@ -4,6 +4,7 @@ package com.example.gachisikyeo_be.app.controller.awsS3;
 import com.example.gachisikyeo_be.app.service.awsS3.AwsS3Service;
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ public class AmazonS3Controller {
     /**
      * 파일 업로드
      */
+    @Operation(summary = "파일 업로드")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseTemplate<List<String>>> uploadFile(
             @RequestPart("files") List<MultipartFile> files
@@ -40,6 +42,7 @@ public class AmazonS3Controller {
     /**
      * 파일 삭제
      */
+    @Operation(summary = "파일 삭제")
     @DeleteMapping
     public ResponseEntity<ApiResponseTemplate<String>> deleteFile(
             @RequestParam String fileName

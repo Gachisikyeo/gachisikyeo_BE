@@ -9,6 +9,7 @@ import com.example.gachisikyeo_be.app.service.productRegistration.ProductRegistr
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class ProductRegistrationController {
 
     private final ProductRegistrationService productRegistrationService;
 
+    @Operation(summary = "상품 등록")
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -51,6 +53,7 @@ public class ProductRegistrationController {
         );
     }
 
+    @Operation(summary = "내 상품 조회")
     @GetMapping("/my")
     public ResponseEntity<ApiResponseTemplate<List<ProductRegistrationResponse>>> getMyProducts(
             @AuthenticationPrincipal String userIdStr
@@ -74,6 +77,7 @@ public class ProductRegistrationController {
     /**
      * 전체 상품 목록 (구매자 / 메인 화면)
      */
+    @Operation(summary = "전체 상품 목록 조회(구매자/메인 화면)")
     @GetMapping
     public ResponseEntity<ApiResponseTemplate<List<ProductRegistrationResponse>>> getAllProducts() {
 
@@ -91,6 +95,7 @@ public class ProductRegistrationController {
         );
     }
 
+    @Operation(summary = "상품 상세정보 조회")
     @GetMapping("/{productId}")
     public ResponseEntity<ApiResponseTemplate<ProductRegistrationResponse>> getProductDetail(
             @PathVariable Long productId
@@ -104,6 +109,8 @@ public class ProductRegistrationController {
         );
     }
 
+    @Operation(summary = "인기있는 상품 조회",
+    description = "조회수 기준")
     @GetMapping("/popular")
     public ResponseEntity<ApiResponseTemplate<List<ProductListResponse>>> getPopularProducts() {
 
