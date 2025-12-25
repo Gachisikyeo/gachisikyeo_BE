@@ -23,13 +23,11 @@ public class ConfirmPaymentResponseDto {
     @Schema(description = "공구 ID")
     private Long groupPurchaseId;
 
-
     @Schema(description = "결제금액")
     private int amount;
 
     @Schema(description = "결제 status(PAID, FAILED 등)")
     private PaymentStatus paymentStatus;
-
 
     @Schema(description = "현재 주문(참여) 수량")
     private int currentQuantity;
@@ -39,7 +37,6 @@ public class ConfirmPaymentResponseDto {
 
     @Schema(description = "공구 status(OPEN, SUCCESS 등)")
     private GroupPurchaseStatus groupPurchaseStatus;
-
 
     @Schema(description = "결제 시간")
     private LocalDateTime paidAt;
