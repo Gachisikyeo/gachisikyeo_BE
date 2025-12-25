@@ -107,8 +107,7 @@ public class MypageService {
                 (int) p.getGroupPurchase().getProduct().getUnitPrice(),   //상품 개당가격
                 p.getGroupPurchase().getTargetQuantity(),  //총수량
                 p.getGroupPurchase().getPickupLocation(), //공구장소
-                p.getGroupPurchase().getPickupAt(),   //공구시간
-                p.getGroupPurchase().getCreatedAt() //공구 생성 시간
+                p.getGroupPurchase().getPickupAt()   //공구시간
         );
     }
 }

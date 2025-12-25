@@ -17,8 +17,4 @@ public class MypageGroupPurchaseDto {
     private int quantity;
     private String pickupLocation;
     private LocalDateTime pickupTime;
-//    private String productName;
-//    private String imageUrl;
-//    private int unitPrice;
-    private LocalDateTime createdAt;
 }
