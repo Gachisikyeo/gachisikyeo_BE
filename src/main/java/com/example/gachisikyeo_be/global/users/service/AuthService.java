@@ -5,6 +5,7 @@ import com.example.gachisikyeo_be.app.dto.LawDongDto;
 import com.example.gachisikyeo_be.app.repository.region.LawDongRepository;
 import com.example.gachisikyeo_be.global.code.ErrorCode;
 import com.example.gachisikyeo_be.global.exception.AuthException;
+import com.example.gachisikyeo_be.global.exception.LawDongNotFoundException;
 import com.example.gachisikyeo_be.global.jwt.TokenProvider;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
 import com.example.gachisikyeo_be.global.users.dto.auth.TokenDto.RefreshTokenRequestDto;
@@ -89,7 +90,7 @@ public class AuthService {
         }
 
         LawDong lawDong = lawDongRepository.findByLawCode(normalUserSignupRequestDto.getLawDongId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 지역입니다."));
+                .orElseThrow(() -> new LawDongNotFoundException(ErrorCode.REGION_NOT_FOUND));
 
         NormalUserCreateCommand normalUserCreateCommand = NormalUserCreateCommand.builder()
                 .email(normalUserSignupRequestDto.getEmail())
