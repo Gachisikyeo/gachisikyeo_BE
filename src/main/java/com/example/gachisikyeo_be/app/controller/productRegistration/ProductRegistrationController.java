@@ -10,6 +10,8 @@ import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Tag(name="ProductRegistration", description = "상품 등록/조회 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
@@ -26,7 +29,10 @@ public class ProductRegistrationController {
 
     private final ProductRegistrationService productRegistrationService;
 
-    @Operation(summary = "상품 등록")
+    @Operation(summary = "상품 등록",
+    description = "새로운 상품을 등록합니다." +
+            "상품 정보(data), 이미지(multipart/form-data 형식) 요청",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -53,7 +59,9 @@ public class ProductRegistrationController {
         );
     }
 
-    @Operation(summary = "내 상품 조회")
+    @Operation(summary = "내 상품 조회",
+    description = "판매자가 등록한 상품 조회",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/my")
     public ResponseEntity<ApiResponseTemplate<List<ProductRegistrationResponse>>> getMyProducts(
             @AuthenticationPrincipal String userIdStr
@@ -95,7 +103,8 @@ public class ProductRegistrationController {
         );
     }
 
-    @Operation(summary = "상품 상세정보 조회")
+    @Operation(summary = "상품 상세정보 조회",
+    description = "상품 Id로 특정 상품의 상세정보 조회")
     @GetMapping("/{productId}")
     public ResponseEntity<ApiResponseTemplate<ProductRegistrationResponse>> getProductDetail(
             @PathVariable Long productId
@@ -110,7 +119,7 @@ public class ProductRegistrationController {
     }
 
     @Operation(summary = "인기있는 상품 조회",
-    description = "조회수 기준")
+    description = "조회수 기준, 조회수 많은 것부터 뜸")
     @GetMapping("/popular")
     public ResponseEntity<ApiResponseTemplate<List<ProductListResponse>>> getPopularProducts() {
 
@@ -128,6 +137,8 @@ public class ProductRegistrationController {
         );
     }
 
+    @Operation(summary = "카테고리별 상품 조회",
+    description = "최신 상품이 먼저 뜸")
     @GetMapping("/category")
     public ResponseEntity<ApiResponseTemplate<List<ProductRegistrationResponse>>> getProductsByCategory(
             @RequestParam ProductCategory category

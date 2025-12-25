@@ -33,6 +33,6 @@ public class NormalUserSignupRequestDto {
     @Schema(description = "유저 타입", example = "BUYER")
     private UserType userType;
 
-    @Schema(description = "법정동 ID", example = "1")
+    @Schema(description = "법정동 ID", example = "1111010100")
     private String lawDongId;
 }

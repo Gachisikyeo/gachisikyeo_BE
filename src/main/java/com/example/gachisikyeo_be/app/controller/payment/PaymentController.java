@@ -7,11 +7,15 @@ import com.example.gachisikyeo_be.global.code.ErrorCode;
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.exception.BusinessException;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name="Payment", description = "결제 상태 정의 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -19,6 +23,9 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    @Operation(summary = "결제 확정",
+    description = "공구 성공 시 결제완료된 상태로 변경됨",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/participations/{participationId}/payments/confirm")
     public ResponseEntity<ApiResponseTemplate<ConfirmPaymentResponseDto>> confirm(
             @PathVariable Long participationId,

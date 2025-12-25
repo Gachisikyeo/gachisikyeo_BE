@@ -8,6 +8,7 @@ import com.example.gachisikyeo_be.global.exception.AuthException;
 import com.example.gachisikyeo_be.global.users.domain.auth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name="Mypage", description = "마이페이지 조회 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mypage")
@@ -31,6 +33,9 @@ public class MypageController {
             조회 내용: 닉네임, 이메일, 주소(법정동), 유저 타입(구매자, 사장님),
             내가 참여한 공구 중 완료된 공구,
             참여한 공구 중 아직 완료 안된 공구
+            
+            /더보기 누르기 전 완료된 공구는 1개, 완료 안된 공구는 3개 데이터 보내짐
+            /더보기 누른 후엔 둘 다 전체 데이터 보내짐
             """,
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/main")
