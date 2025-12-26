@@ -1,4 +1,4 @@
-package com.example.gachisikyeo_be.app.dto.response;
+package com.example.gachisikyeo_be.app.dto.productRegistration;
 
 import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import io.swagger.v3.oas.annotations.media.Schema;

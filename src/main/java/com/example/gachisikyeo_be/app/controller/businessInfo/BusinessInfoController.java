@@ -1,8 +1,8 @@
 package com.example.gachisikyeo_be.app.controller.businessInfo;
 
 import com.example.gachisikyeo_be.app.domain.businessInfo.BusinessInfo;
-import com.example.gachisikyeo_be.app.dto.request.BusinessInfoRequest;
-import com.example.gachisikyeo_be.app.dto.response.BusinessInfoResponse;
+import com.example.gachisikyeo_be.app.dto.businessInfo.BusinessInfoRequest;
+import com.example.gachisikyeo_be.app.dto.businessInfo.BusinessInfoResponse;
 import com.example.gachisikyeo_be.app.service.businessInfo.BusinessInfoService;
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;

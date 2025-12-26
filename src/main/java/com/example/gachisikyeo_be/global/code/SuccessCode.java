@@ -45,7 +45,10 @@ public enum SuccessCode {
     PAYMENT_CONFIRMED(HttpStatus.OK, "결제가 완료되었습니다."),
 
     // SellerDashboard
-    SELLER_DASHBOARD_SUCCESS(HttpStatus.OK,"총 판매 상품 수량 조회 성공");
+    SELLER_DASHBOARD_SUCCESS(HttpStatus.OK,"총 판매 상품 수량 조회 성공"),
+    SELLER_MONTHLY_SALES_FETCHED(HttpStatus.OK,"월별 매출 조회 성공"),
+    SELLER_PRODUCT_LIST_FETCHED(HttpStatus.OK,"상품정보리스트 조회 성공");
+
     private final HttpStatus httpStatus;
     private final String message;
 }

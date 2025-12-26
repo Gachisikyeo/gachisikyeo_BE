@@ -92,4 +92,12 @@ public class Product extends BaseTimeEntity {
         this.viewCount++;
     }
 
+    public void decreaseStockByOneBox() {
+        if (this.stockQuantity <= 0) {
+            throw new IllegalStateException("재고가 없습니다.");
+        }
+        this.stockQuantity -= 1;
+    }
+
+
 }

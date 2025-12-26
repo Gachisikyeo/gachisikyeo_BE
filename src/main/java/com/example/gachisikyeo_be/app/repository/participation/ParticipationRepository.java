@@ -97,4 +97,25 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
         where p.id = :participationId
     """)
     Optional<Participation> findByIdWithGroupAndProduct(@Param("participationId") Long participationId);
+
+    @Query("""
+    SELECT COALESCE(SUM(pr.price * p.quantity), 0)
+    FROM Participation p
+    JOIN p.groupPurchase gp
+    JOIN gp.product pr
+    JOIN pr.businessInfo bi
+    JOIN bi.user seller
+    WHERE seller.id = :sellerId
+      AND p.status = :status
+      AND p.createdAt >= :start
+      AND p.createdAt < :end
+""")
+    Long sumMonthlySales(
+            @Param("sellerId") Long sellerId,
+            @Param("status") ParticipationStatus status,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+
 }
