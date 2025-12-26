@@ -4,23 +4,30 @@ import com.example.gachisikyeo_be.global.jwt.JwtFilter;
 import com.example.gachisikyeo_be.global.jwt.TokenProvider;
 import com.example.gachisikyeo_be.global.oauth.OAuth2SuccessHandler;
 import com.example.gachisikyeo_be.global.oauth.OAuth2UserProviderRouter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,31 +37,19 @@ public class SecurityConfig {
     private final OAuth2UserProviderRouter oAuth2UserProviderRouter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-    /**
-     * ✅ CORS 정책(배포 도메인 + 로컬 개발 도메인 허용)
-     * - JWT를 Authorization 헤더로 보내는 구조라 allowCredentials(false) 권장
-     * - 배포 도메인은 실제 값으로 반드시 변경
-     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "https://gachisikyeo.vercel.app", // TODO: 프론트 배포 도메인
-                "http://localhost:3000",       // React(CRA/Next)
-                "http://localhost:5173"        // React(Vite)
+                "https://gachisikyeo.vercel.app",
+                "http://localhost:3000",
+                "http://localhost:5173"
         ));
 
-        // ✅ 프리플라이트 포함
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-
-        // ✅ Authorization 헤더(JWT) 허용 필수
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
-
-        // ✅ 쿠키 기반 인증이 아니라면 false (권장)
         config.setAllowCredentials(false);
-
-        // ✅ preflight 캐시(선택)
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -62,10 +57,51 @@ public class SecurityConfig {
         return source;
     }
 
+    /* =========================
+       401 / 403 JSON 응답 핸들러
+    ========================= */
+    @Bean
+    public AuthenticationEntryPoint restAuthenticationEntryPoint() {
+        ObjectMapper om = new ObjectMapper();
+        return (request, response, authException) -> {
+            response.setStatus(401);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("status", 401);
+            body.put("success", false);
+            body.put("message", "인증이 필요합니다.");
+            body.put("data", null);
+
+            om.writeValue(response.getWriter(), body);
+        };
+    }
+
+    @Bean
+    public AccessDeniedHandler restAccessDeniedHandler() {
+        ObjectMapper om = new ObjectMapper();
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(403);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("status", 403);
+            body.put("success", false);
+            body.put("message", "접근 권한이 없습니다.");
+            body.put("data", null);
+
+            om.writeValue(response.getWriter(), body);
+        };
+    }
+
+    /* =========================
+       (0) Swagger 체인
+    ========================= */
     @Bean
     @Order(0)
     public SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http) throws Exception {
-        // swagger 전용 필터체인
         http
                 .securityMatcher(
                         "/swagger-ui.html",
@@ -74,7 +110,6 @@ public class SecurityConfig {
                         "/error",
                         "/favicon.ico"
                 )
-                // ✅ CORS 활성화 (Swagger 체인에도 필요)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -83,31 +118,60 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /* =========================
+       (1) API 체인: /api/** 는 JWT 기반 + 401/403 JSON
+       - 여기서 oauth2Login() 절대 켜면 안 됩니다(302 리다이렉트 유발)
+    ========================= */
     @Bean
     @Order(1)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // 기본 API들용 필터체인
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                // ✅ CORS 활성화 (API 체인에도 필요)
+                .securityMatcher("/api/**")
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .oauth2Login(AbstractHttpConfigurer::disable) // ✅ 중요: API는 리다이렉트 금지
+
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(restAuthenticationEntryPoint())
+                        .accessDeniedHandler(restAccessDeniedHandler())
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/oauth2/**", "/login/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/law-dong/**",
-                                "/sido", "/sigungu", "/eupmyeondong",
-                                "/api/regions/**", "/api/lawdong/**"
+                        // 공개 GET
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/regions/**",
+                                "/api/lawdong/**",
+                                "/api/products",
+                                "/api/products/**"
                         ).permitAll()
+
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // .requestMatchers(HttpMethod.GET, "/api/restaurant/**").permitAll() // 추후
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    /* =========================
+       (2) OAuth/Auth 체인: 리다이렉트가 필요한 경로만 oauth2Login 허용
+       - OAuth2는 보통 세션이 필요하므로 IF_REQUIRED 권장
+    ========================= */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain oauthSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/auth/**", "/oauth2/**", "/login/**")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserProviderRouter))
                         .successHandler(oAuth2SuccessHandler)
-                )
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                );
 
         return http.build();
     }
