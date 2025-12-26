@@ -55,7 +55,7 @@ public class Product extends BaseTimeEntity {
     private String descriptionTitle; // 설명제목
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description; //자세한 설명
 
     @Column(nullable = false)
