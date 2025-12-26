@@ -2,9 +2,11 @@ package com.example.gachisikyeo_be.app.controller.productRegistration;
 
 import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import com.example.gachisikyeo_be.app.domain.productRegistration.ProductCategory;
+import com.example.gachisikyeo_be.app.dto.common.PageResponse;
 import com.example.gachisikyeo_be.app.dto.productRegistration.ProductListResponse;
 import com.example.gachisikyeo_be.app.dto.productRegistration.ProductRegistrationRequest;
 import com.example.gachisikyeo_be.app.dto.productRegistration.ProductRegistrationResponse;
+import com.example.gachisikyeo_be.app.dto.productRegistration.ProductSortKey;
 import com.example.gachisikyeo_be.app.service.productRegistration.ProductRegistrationService;
 import com.example.gachisikyeo_be.global.code.SuccessCode;
 import com.example.gachisikyeo_be.global.responseTemplate.ApiResponseTemplate;
@@ -12,14 +14,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,9 +31,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
+@Validated
 public class ProductRegistrationController {
 
     private final ProductRegistrationService productRegistrationService;
+
+    // size 상한: 프론트/트래픽 고려해 적당히 제한(필요 시 조정)
+    private static final int MAX_SIZE = 50;
 
     /* =========================
        상품 등록
@@ -59,46 +67,53 @@ public class ProductRegistrationController {
     }
 
     /* =========================
-       판매자 상품 관리 (8개씩)
+       판매자 상품 관리
+       GET /api/products/my?page=0&size=8&sortKey=CREATED_AT&direction=DESC
     ========================= */
-    @Operation(
-            summary = "내 상품 조회 (판매자)",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
+    @Operation(summary = "내 상품 조회 (판매자)", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/my")
-    public ResponseEntity<ApiResponseTemplate<Page<ProductRegistrationResponse>>> getMyProducts(
+    public ResponseEntity<ApiResponseTemplate<PageResponse<ProductRegistrationResponse>>> getMyProducts(
             @AuthenticationPrincipal String userIdStr,
-            @PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC)
-            Pageable pageable
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "8") @Min(1) @Max(MAX_SIZE) int size,
+            @RequestParam(defaultValue = "CREATED_AT") ProductSortKey sortKey,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction
     ) {
         Long userId = Long.parseLong(userIdStr);
 
-        Page<ProductRegistrationResponse> page =
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, sortKey.getProperty()));
+
+        Page<ProductRegistrationResponse> result =
                 productRegistrationService.getMyProducts(userId, pageable)
                         .map(ProductRegistrationResponse::from);
 
         return ApiResponseTemplate.success(
                 SuccessCode.PRODUCT_LIST_SUCCESS,
-                page
+                PageResponse.from(result)
         );
     }
 
     /* =========================
-       전체 상품 목록 (구매자, 12개씩)
+       전체 상품 목록
+       GET /api/products?page=0&size=12&sortKey=CREATED_AT&direction=DESC
     ========================= */
     @Operation(summary = "전체 상품 목록 조회 (구매자)")
     @GetMapping
-    public ResponseEntity<ApiResponseTemplate<Page<ProductRegistrationResponse>>> getAllProducts(
-            @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC)
-            Pageable pageable
+    public ResponseEntity<ApiResponseTemplate<PageResponse<ProductRegistrationResponse>>> getAllProducts(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "12") @Min(1) @Max(MAX_SIZE) int size,
+            @RequestParam(defaultValue = "CREATED_AT") ProductSortKey sortKey,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction
     ) {
-        Page<ProductRegistrationResponse> page =
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, sortKey.getProperty()));
+
+        Page<ProductRegistrationResponse> result =
                 productRegistrationService.getAllProducts(pageable)
                         .map(ProductRegistrationResponse::from);
 
         return ApiResponseTemplate.success(
                 SuccessCode.PRODUCT_LIST_SUCCESS,
-                page
+                PageResponse.from(result)
         );
     }
 
@@ -119,41 +134,49 @@ public class ProductRegistrationController {
     }
 
     /* =========================
-       인기 상품 조회 (조회수 기준)
+       인기 상품 조회 (정렬 고정: VIEW_COUNT DESC)
+       GET /api/products/popular?page=0&size=12
     ========================= */
     @Operation(summary = "인기 상품 조회")
     @GetMapping("/popular")
-    public ResponseEntity<ApiResponseTemplate<Page<ProductListResponse>>> getPopularProducts(
-            @PageableDefault(size = 12, sort = "viewCount", direction = Sort.Direction.DESC)
-            Pageable pageable
+    public ResponseEntity<ApiResponseTemplate<PageResponse<ProductListResponse>>> getPopularProducts(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "12") @Min(1) @Max(MAX_SIZE) int size
     ) {
-        Page<ProductListResponse> page =
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "viewCount"));
+
+        Page<ProductListResponse> result =
                 productRegistrationService.getAllProducts(pageable)
                         .map(ProductListResponse::from);
 
         return ApiResponseTemplate.success(
                 SuccessCode.PRODUCT_LIST_SUCCESS,
-                page
+                PageResponse.from(result)
         );
     }
 
     /* =========================
        카테고리별 상품 조회
+       GET /api/products/category?category=FOOD&page=0&size=12&sortKey=CREATED_AT&direction=DESC
     ========================= */
     @Operation(summary = "카테고리별 상품 조회")
     @GetMapping("/category")
-    public ResponseEntity<ApiResponseTemplate<Page<ProductRegistrationResponse>>> getProductsByCategory(
+    public ResponseEntity<ApiResponseTemplate<PageResponse<ProductRegistrationResponse>>> getProductsByCategory(
             @RequestParam ProductCategory category,
-            @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC)
-            Pageable pageable
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "12") @Min(1) @Max(MAX_SIZE) int size,
+            @RequestParam(defaultValue = "CREATED_AT") ProductSortKey sortKey,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction
     ) {
-        Page<ProductRegistrationResponse> page =
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, sortKey.getProperty()));
+
+        Page<ProductRegistrationResponse> result =
                 productRegistrationService.getProductsByCategory(category, pageable)
                         .map(ProductRegistrationResponse::from);
 
         return ApiResponseTemplate.success(
                 SuccessCode.PRODUCT_LIST_SUCCESS,
-                page
+                PageResponse.from(result)
         );
     }
 }
