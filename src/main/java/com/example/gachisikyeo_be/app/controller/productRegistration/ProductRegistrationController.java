@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,12 +50,11 @@ public class ProductRegistrationController {
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseTemplate<ProductRegistrationResponse>> createProduct(
-            @AuthenticationPrincipal String userIdStr,
+            Authentication authentication,
             @RequestPart("data") String data,
             @RequestPart("image") MultipartFile image
     ) throws Exception {
-
-        Long userId = Long.parseLong(userIdStr);
+        Long userId = Long.parseLong(authentication.getName());
         ProductRegistrationRequest request =
                 new ObjectMapper().readValue(data, ProductRegistrationRequest.class);
 
