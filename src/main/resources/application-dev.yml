@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: update   # EC2 dev는 create 비추천(재시작 시 데이터/스키마 문제)
+      ddl-auto: validate   # EC2 dev는 create 비추천(재시작 시 데이터/스키마 문제)
 
   security:
     oauth2:
