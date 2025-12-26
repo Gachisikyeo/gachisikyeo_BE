@@ -73,17 +73,21 @@ public class ProductRegistrationController {
             @RequestPart("image") MultipartFile image
     ) throws Exception {
 
-        System.out.println("===== DEBUG START =====");
-        System.out.println("AUTH = " + (authentication == null ? "null" : authentication.getClass().getName()));
-        System.out.println("AUTH NAME = " + (authentication == null ? "null" : authentication.getName()));
-        System.out.println("DATA(raw) = " + data);
-        System.out.println("IMAGE = " + (image == null ? "null" : (image.getOriginalFilename() + " / " + image.getSize())));
-        System.out.println("===== DEBUG END =====");
+        Long userId = Long.parseLong(authentication.getName());
+        ProductRegistrationRequest request = new ObjectMapper().readValue(data, ProductRegistrationRequest.class);
 
-        // 아래는 일단 임시로 막아두고(500 방지) 출력만 확인해도 됩니다.
-        // Long userId = Long.parseLong(authentication.getName());
+        try {
+            Product product = productRegistrationService.create(userId, request, image);
 
-        return ApiResponseTemplate.success(SuccessCode.PRODUCT_CREATED, null);
+            return ApiResponseTemplate.success(
+                    SuccessCode.PRODUCT_CREATED,
+                    ProductRegistrationResponse.from(product)
+            );
+        } catch (Exception e) {
+            // ✅ 이게 핵심: 원인 예외를 stdout에 그대로 남김
+            e.printStackTrace();
+            throw e; // 전역 핸들러가 500 내려주는 건 유지
+        }
     }
 
     /* =========================
