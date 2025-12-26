@@ -48,4 +48,23 @@ public class BusinessInfoController {
                 BusinessInfoResponse.from(businessInfo)
         );
     }
+
+    @Operation(
+            summary = "내 판매자(사업자) 정보 조회",
+            description = "판매자 등록 여부 확인 용도. 등록되어 있으면 200, 없으면 404",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponseTemplate<BusinessInfoResponse>> getMyBusinessInfo(
+            @AuthenticationPrincipal String userIdStr
+    ) {
+        Long userId = Long.parseLong(userIdStr);
+
+        BusinessInfo businessInfo = businessInfoService.getMyBusinessInfo(userId);
+
+        return ApiResponseTemplate.success(
+                SuccessCode.BUSINESS_INFO_FETCH_SUCCESS,
+                BusinessInfoResponse.from(businessInfo)
+        );
+    }
 }

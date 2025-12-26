@@ -24,6 +24,7 @@ public enum SuccessCode {
 
     // Business
     BUSINESS_ENROLL_SUCCESS(HttpStatus.CREATED, "상점 등록 성공"),
+    BUSINESS_INFO_FETCH_SUCCESS(HttpStatus.OK, "사업자 조회 성공"),
 
 
     // GroupPurchase

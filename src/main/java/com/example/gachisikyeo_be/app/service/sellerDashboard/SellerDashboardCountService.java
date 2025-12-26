@@ -7,6 +7,8 @@ import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import com.example.gachisikyeo_be.app.repository.businessInfo.BusinessInfoRepository;
 import com.example.gachisikyeo_be.app.repository.groupPurchase.GroupPurchaseRepository;
 import com.example.gachisikyeo_be.app.repository.productRegistration.ProductRegistrationRepository;
+import com.example.gachisikyeo_be.global.code.ErrorCode;
+import com.example.gachisikyeo_be.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +27,7 @@ public class SellerDashboardCountService {
     public long getTotalSoldQuantity(Long userId) {
 
         BusinessInfo businessInfo = businessInfoRepository.findByUser_Id(userId)
-                .orElseThrow(() -> new IllegalStateException("사업자 정보 없음"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_INFO_NOT_FOUND));
 
         List<Product> products =
                 productRepository.findByBusinessInfo(businessInfo);

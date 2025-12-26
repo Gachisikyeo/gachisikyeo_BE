@@ -3,12 +3,15 @@ package com.example.gachisikyeo_be.app.service.businessInfo;
 import com.example.gachisikyeo_be.app.domain.businessInfo.BusinessInfo;
 import com.example.gachisikyeo_be.app.dto.businessInfo.BusinessInfoRequest;
 import com.example.gachisikyeo_be.app.repository.businessInfo.BusinessInfoRepository;
+import com.example.gachisikyeo_be.global.code.ErrorCode;
+import com.example.gachisikyeo_be.global.exception.BusinessException;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
 import com.example.gachisikyeo_be.global.users.domain.auth.UserType;
 import com.example.gachisikyeo_be.global.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -47,5 +50,11 @@ public class BusinessInfoService {
                     );
                     return businessInfoRepository.save(businessInfo);
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public BusinessInfo getMyBusinessInfo(Long userId) {
+        return businessInfoRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_INFO_NOT_FOUND));
     }
 }

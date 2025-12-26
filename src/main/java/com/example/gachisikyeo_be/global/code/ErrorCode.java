@@ -36,7 +36,7 @@ public enum ErrorCode {
     GROUP_PURCHASE_NOT_FOUND(HttpStatus.NOT_FOUND, "공구를 찾을 수 없습니다."),
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."),
     PARTICIPATION_NOT_FOUND(HttpStatus.NOT_FOUND, "공구 참여 정보를 찾을 수 없습니다."),
-
+    BUSINESS_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 사업자를 찾을 수 없습니다."),
     // 409 Conflict
     ALREADY_EXIST_USER(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
     PARTICIPATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 해당 공구에 참여했습니다."),
