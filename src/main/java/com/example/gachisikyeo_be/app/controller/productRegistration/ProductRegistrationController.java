@@ -43,51 +43,27 @@ public class ProductRegistrationController {
     /* =========================
        상품 등록
     ========================= */
-//    @Operation(
-//            summary = "상품 등록",
-//            description = "상품 정보(data) + 이미지(multipart/form-data)",
-//            security = @SecurityRequirement(name = "bearerAuth")
-//    )
-//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<ApiResponseTemplate<ProductRegistrationResponse>> createProduct(
-//            Authentication authentication,
-//            @RequestPart("data") String data,
-//            @RequestPart("image") MultipartFile image
-//    ) throws Exception {
-//        Long userId = Long.parseLong(authentication.getName());
-//        ProductRegistrationRequest request =
-//                new ObjectMapper().readValue(data, ProductRegistrationRequest.class);
-//
-//        Product product = productRegistrationService.create(userId, request, image);
-//
-//        return ApiResponseTemplate.success(
-//                SuccessCode.PRODUCT_CREATED,
-//                ProductRegistrationResponse.from(product)
-//        );
-//    }
-
+    @Operation(
+            summary = "상품 등록",
+            description = "상품 정보(data) + 이미지(multipart/form-data)",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseTemplate<ProductRegistrationResponse>> createProduct(
             Authentication authentication,
             @RequestPart("data") String data,
             @RequestPart("image") MultipartFile image
     ) throws Exception {
-
         Long userId = Long.parseLong(authentication.getName());
-        ProductRegistrationRequest request = new ObjectMapper().readValue(data, ProductRegistrationRequest.class);
+        ProductRegistrationRequest request =
+                new ObjectMapper().readValue(data, ProductRegistrationRequest.class);
 
-        try {
-            Product product = productRegistrationService.create(userId, request, image);
+        Product product = productRegistrationService.create(userId, request, image);
 
-            return ApiResponseTemplate.success(
-                    SuccessCode.PRODUCT_CREATED,
-                    ProductRegistrationResponse.from(product)
-            );
-        } catch (Exception e) {
-            // ✅ 이게 핵심: 원인 예외를 stdout에 그대로 남김
-            e.printStackTrace();
-            throw e; // 전역 핸들러가 500 내려주는 건 유지
-        }
+        return ApiResponseTemplate.success(
+                SuccessCode.PRODUCT_CREATED,
+                ProductRegistrationResponse.from(product)
+        );
     }
 
     /* =========================
