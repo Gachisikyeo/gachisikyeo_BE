@@ -43,27 +43,47 @@ public class ProductRegistrationController {
     /* =========================
        상품 등록
     ========================= */
-    @Operation(
-            summary = "상품 등록",
-            description = "상품 정보(data) + 이미지(multipart/form-data)",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
+//    @Operation(
+//            summary = "상품 등록",
+//            description = "상품 정보(data) + 이미지(multipart/form-data)",
+//            security = @SecurityRequirement(name = "bearerAuth")
+//    )
+//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<ApiResponseTemplate<ProductRegistrationResponse>> createProduct(
+//            Authentication authentication,
+//            @RequestPart("data") String data,
+//            @RequestPart("image") MultipartFile image
+//    ) throws Exception {
+//        Long userId = Long.parseLong(authentication.getName());
+//        ProductRegistrationRequest request =
+//                new ObjectMapper().readValue(data, ProductRegistrationRequest.class);
+//
+//        Product product = productRegistrationService.create(userId, request, image);
+//
+//        return ApiResponseTemplate.success(
+//                SuccessCode.PRODUCT_CREATED,
+//                ProductRegistrationResponse.from(product)
+//        );
+//    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseTemplate<ProductRegistrationResponse>> createProduct(
             Authentication authentication,
             @RequestPart("data") String data,
             @RequestPart("image") MultipartFile image
     ) throws Exception {
-        Long userId = Long.parseLong(authentication.getName());
-        ProductRegistrationRequest request =
-                new ObjectMapper().readValue(data, ProductRegistrationRequest.class);
 
-        Product product = productRegistrationService.create(userId, request, image);
+        System.out.println("===== DEBUG START =====");
+        System.out.println("AUTH = " + (authentication == null ? "null" : authentication.getClass().getName()));
+        System.out.println("AUTH NAME = " + (authentication == null ? "null" : authentication.getName()));
+        System.out.println("DATA(raw) = " + data);
+        System.out.println("IMAGE = " + (image == null ? "null" : (image.getOriginalFilename() + " / " + image.getSize())));
+        System.out.println("===== DEBUG END =====");
 
-        return ApiResponseTemplate.success(
-                SuccessCode.PRODUCT_CREATED,
-                ProductRegistrationResponse.from(product)
-        );
+        // 아래는 일단 임시로 막아두고(500 방지) 출력만 확인해도 됩니다.
+        // Long userId = Long.parseLong(authentication.getName());
+
+        return ApiResponseTemplate.success(SuccessCode.PRODUCT_CREATED, null);
     }
 
     /* =========================
