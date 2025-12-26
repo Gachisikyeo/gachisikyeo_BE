@@ -1,7 +1,9 @@
 # 같이 시켜 (gachisikyeo) — Backend
 
+---
+
 ## 프로젝트 이름
-같이 시켜
+**같이 시켜**
 
 ## 프로젝트 소개
 **지역(법정동) 기반 공동구매 서비스**  
@@ -9,6 +11,8 @@
 
 ## 프로젝트 한 줄 소개
 - “내가 사는 동네 사람들과 같이 사고, 같이 아끼는” 지역 기반 공동구매 플랫폼의 백엔드 API 서버
+
+---
 
 ## 핵심 기능
 - **회원/인증**
@@ -30,30 +34,39 @@
   - 사업자 정보 등록
   - 판매자 대시보드(상품/매출 등 요약 조회)
 
+---
+
 ## 배포 URL (dev profile 기준)
 ```text
 Frontend: https://gachisikyeo.com
 Backend OAuth Redirect Base: http://gachisikyeo.duckdns.org
-기술 스택
-Language: Java 17
+```
+## 기술 스택
 
-Framework: Spring Boot
+- Language: Java 17
 
-Security: Spring Security, JWT, OAuth2 (Google)
+- Framework: Spring Boot
 
-Data: Spring Data JPA, MySQL
+- Security: Spring Security, JWT, OAuth2 (Google)
 
-Infra: AWS S3
+- Data: Spring Data JPA, MySQL
 
-Docs: Swagger(OpenAPI)
+- Infra: AWS S3
 
-Git 협업 방식
-1. 브랜치 전략
+- Docs: Swagger(OpenAPI)
+---
+## Git 협업 방식
+### 브랜치 전략
+```
 기본 브랜치: main
 
 항상 배포 가능한 상태 유지
 
-직접 push 금지, 오직 PR(Pull Request)으로만 변경 가능
+직접 push 금지, 오직 PR(Pull Request)으로만 변경 가능.
+제가(이승창) 검토 후, merge 하도록 하겠습니다.
+
+PR날리시고, Postman 결과 카톡으로 보내주세요!
++ 항상 origin/main을 본인 작업 브랜치에 pull하고 작업진행!!!
 
 기능 개발 브랜치: feature/*
 
@@ -62,56 +75,4 @@ Git 협업 방식
 버그 수정 브랜치: fix/*
 
 예: fix/login-error
-
-2. 작업 순서 (팀원 공통 규칙)
-2-1. 최초 한 번만 (맨 처음 셋업)
-bash
-코드 복사
-git clone <레포지토리-URL>
-cd <폴더이름>
-git checkout main
-2-2. 기능 개발 시작(매 작업마다)
-bash
-코드 복사
-git checkout main
-git pull origin main
-git checkout -b feature/<작업명>
-예)
-
-bash
-코드 복사
-git checkout -b feature/login
-2-3. 작업 후 커밋 (컨벤션 준수)
-bash
-코드 복사
-git add .
-git commit -m "feat: 로그인 API 추가"
-2-4. 원격 브랜치 푸시
-bash
-코드 복사
-git push origin feature/<작업명>
-2-5. PR 생성 및 병합
-GitHub에서 feature/* → main PR 생성
-
-리뷰 후 Merge
-
-Merge 후 최신화 및 브랜치 정리
-
-bash
-코드 복사
-git checkout main
-git pull origin main
-git branch -d feature/<작업명>
-3. 커밋 컨벤션 (권장)
-feat: 기능 추가
-
-fix: 버그 수정
-
-refactor: 리팩토링(기능 변경 없음)
-
-docs: 문서 수정
-
-test: 테스트 추가/수정
-
-chore: 빌드/설정/패키지 관리 등
 ```
