@@ -14,12 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -48,7 +48,13 @@ public class SecurityConfig {
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+
+        // ✅ preflight에서 다양한 헤더가 들어올 수 있으므로 * 권장
+        config.setAllowedHeaders(List.of("*"));
+
+        // 프론트에서 읽어야 하는 헤더가 있다면 expose
+        config.setExposedHeaders(List.of("Set-Cookie", "Authorization"));
+
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
@@ -119,48 +125,10 @@ public class SecurityConfig {
     }
 
     /* =========================
-       (1) API 체인: /api/** 는 JWT 기반 + 401/403 JSON
-       - 여기서 oauth2Login() 절대 켜면 안 됩니다(302 리다이렉트 유발)
+       (1) OAuth/Auth 체인: 리다이렉트 필요한 경로만
     ========================= */
     @Bean
     @Order(1)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/**")
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .oauth2Login(AbstractHttpConfigurer::disable) // ✅ 중요: API는 리다이렉트 금지
-
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(restAuthenticationEntryPoint())
-                        .accessDeniedHandler(restAccessDeniedHandler())
-                )
-                .authorizeHttpRequests(auth -> auth
-                        // 공개 GET
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/regions/**",
-                                "/lawdong/**",
-                                "/api/products",
-                                "/api/products/**"
-                        ).permitAll()
-
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    /* =========================
-       (2) OAuth/Auth 체인: 리다이렉트가 필요한 경로만 oauth2Login 허용
-       - OAuth2는 보통 세션이 필요하므로 IF_REQUIRED 권장
-    ========================= */
-    @Bean
-    @Order(2)
     public SecurityFilterChain oauthSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/auth/**", "/oauth2/**", "/login/**")
@@ -172,6 +140,77 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserProviderRouter))
                         .successHandler(oAuth2SuccessHandler)
                 );
+
+        return http.build();
+    }
+
+    /* =========================
+       (2) API 체인: JWT 기반 + 401/403 JSON
+       ✅ /api/** 뿐 아니라 /law-dong/**도 여기서 같이 처리
+    ========================= */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/api/**", "/law-dong/**")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .oauth2Login(AbstractHttpConfigurer::disable) // ✅ API는 302 리다이렉트 금지
+
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(restAuthenticationEntryPoint())
+                        .accessDeniedHandler(restAccessDeniedHandler())
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ✅ 지역 조회는 가입 화면에서 인증 없이 필요
+                        .requestMatchers(HttpMethod.GET,
+                                "/law-dong/**",        // 실제 컨트롤러 경로
+                                "/api/law-dong/**"     // 프론트/프록시가 /api를 붙이는 경우 대비
+                        ).permitAll()
+
+                        // 기타 공개 GET
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/regions/**",
+                                "/api/products",
+                                "/api/products/**"
+                        ).permitAll()
+
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    /* =========================
+       (99) 기본 체인: 나머지 요청은 모두 차단/인증 요구(보안상 안전)
+       - 필요하면 permitAll 경로를 추가
+    ========================= */
+    @Bean
+    @Order(99)
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/**")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .oauth2Login(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(restAuthenticationEntryPoint())
+                        .accessDeniedHandler(restAccessDeniedHandler())
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
