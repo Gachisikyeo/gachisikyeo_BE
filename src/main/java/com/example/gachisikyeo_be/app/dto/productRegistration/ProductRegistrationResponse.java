@@ -1,6 +1,7 @@
 package com.example.gachisikyeo_be.app.dto.productRegistration;
 
 import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
+import com.example.gachisikyeo_be.app.domain.productRegistration.ProductCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,16 @@ public class ProductRegistrationResponse {
     @Schema(description = "개당가격")
     private long unitPrice;
 
+    @Schema(description = "상품 설명")
+    private String description;
+
+    @Schema(description = "마켓 이름")
+    private String storeName;
+
+    @Schema(description = "카테고리")
+    private ProductCategory productCategory;
+
+
     public static ProductRegistrationResponse from(Product product) {
         return ProductRegistrationResponse.builder()
                 .id(product.getId())
@@ -40,6 +51,9 @@ public class ProductRegistrationResponse {
                 .unitQuantity(product.getUnitQuantity())
                 .imageUrl(product.getImageUrl())
                 .unitPrice(product.getPrice() / product.getUnitQuantity())
+                .description(product.getDescription())
+                .storeName(product.getBusinessInfo().getStoreName())
+                .productCategory(product.getCategory())
                 .build();
     }
 }
