@@ -19,14 +19,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 
 @Service
 @RequiredArgsConstructor
 public class GroupPurchaseService {
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+    private static final LocalTime END_OF_DAY = LocalTime.of(23, 59, 59);
+
     private final UserRepository userRepository;
-    private final LawDongRepository lawDongRepository;
     private final GroupPurchaseRepository groupPurchaseRepository;
     private final ProductRegistrationRepository productRegistrationRepository;
 
@@ -43,23 +49,27 @@ public class GroupPurchaseService {
         // 무결성 검증 추가
         validateCreateRequest(req);
 
-        LawDong region = lawDongRepository.findByLawCode(req.getRegionId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.REGION_NOT_FOUND));
-
         Product productRegistration = productRegistrationRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // ✅ 프론트에서 받은 "마감일(LocalDate)" -> 서버에서 23:59:59(LocalDateTime)로 확정
+        LocalDateTime endAt = toEndAt(req.getGroupEndAt());
+        LocalDateTime pickupAtKst = req.getPickupAt()
+                .atZoneSameInstant(KST)
+                .toLocalDateTime();
 
         GroupPurchaseCreateCommand cmd = GroupPurchaseCreateCommand.builder()
                 .productRegistration(productRegistration) // PathVariable에서 받은 값 사용
                 .hostBuyQuantity(req.getHostBuyQuantity())
                 .targetQuantity(req.getTargetQuantity())
                 .minimumOrderUnit(req.getMinimumOrderUnit())
-                .groupEndAt(req.getGroupEndAt())
+                .groupEndAt(endAt)
                 .pickupLocation(req.getPickupLocation())
-                .pickupAt(req.getPickupAt())
+                .pickupAt(pickupAtKst)
+                .hostContact(req.getHostContact())
                 .build();
 
-        GroupPurchase saved = groupPurchaseRepository.save(GroupPurchase.create(host, region, cmd));
+        GroupPurchase saved = groupPurchaseRepository.save(GroupPurchase.create(host, cmd));
 
         // 응답은 from()으로 통일
         return CreateGroupPurchaseResponseDto.from(saved);
@@ -73,6 +83,14 @@ public class GroupPurchaseService {
                 .toList();
     }
 
+    private LocalDateTime toEndAt(LocalDate endDate) {
+        if (endDate == null) {
+            // @NotNull로 걸러지겠지만 방어적으로 처리
+            throw new BusinessException(ErrorCode.VALIDATION_EXCEPTION);
+        }
+        return endDate.atTime(END_OF_DAY); // ✅ 23:59:59
+    }
+
     private void validateCreateRequest(CreateGroupPurchaseRequestDto req) {
         int hostBuy = req.getHostBuyQuantity();
         int target = req.getTargetQuantity();
@@ -84,6 +102,13 @@ public class GroupPurchaseService {
 
         if (minUnit > target) {
             throw new BusinessException(ErrorCode.GROUP_PURCHASE_INVALID_MINIMUM_ORDER_UNIT);
+        }
+        // ✅ 마감일(=해당일 23:59:59)이 "현재" 이후인지 검증
+        LocalDateTime endAt = toEndAt(req.getGroupEndAt());
+        LocalDateTime now = LocalDateTime.now(KST);
+
+        if (!endAt.isAfter(now)) {
+            throw new BusinessException(ErrorCode.GROUP_PURCHASE_INVALID_END_AT);
         }
     }
 }

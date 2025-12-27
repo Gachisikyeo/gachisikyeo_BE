@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class GroupPurchaseCreateCommand {
     private Product productRegistration;
+    private String hostContact;
     private int hostBuyQuantity;
     private int targetQuantity;
     private int minimumOrderUnit;

@@ -14,20 +14,14 @@ public class CreateGroupPurchaseResponseDto {
     @Schema(description = "공구 ID")
     private Long groupPurchaseId;
 
-
-    @Schema(description = "공구 진행 지역의 ID")
-    private Long regionId;
-
-    @Schema(description = "공구 진행 지역의 주소")
-    private String regionName;
-
-
     @Schema(description = "총대 ID")
     private Long hostUserId;
 
     @Schema(description = "총대 닉네임")
     private String userNickName;
 
+    @Schema(description = "총대 전화번호")
+    private String hostContact;
 
     @Schema(description = "현재 주문(참여) 수량")
     private int currentQuantity;
@@ -43,8 +37,7 @@ public class CreateGroupPurchaseResponseDto {
     public static CreateGroupPurchaseResponseDto from(GroupPurchase gp) {
         return CreateGroupPurchaseResponseDto.builder()
                 .groupPurchaseId(gp.getId())
-                .regionId(gp.getRegion().getId())
-                .regionName(gp.getRegion().getSido() + " " + gp.getRegion().getSigungu() + " " + gp.getRegion().getDong())
+                .hostContact(gp.getHostContact())
                 .hostUserId(gp.getHostUser().getId())
                 .userNickName(gp.getHostUser().getNickName())
                 .currentQuantity(gp.getCurrentQuantity())

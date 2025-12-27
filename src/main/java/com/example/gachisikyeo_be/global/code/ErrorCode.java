@@ -18,6 +18,8 @@ public enum ErrorCode {
     GROUP_PURCHASE_TARGET_EXCEEDED(HttpStatus.BAD_REQUEST, "목표 수량을 초과하여 참여할 수 없습니다."),
     PARTICIPATION_NOT_PENDING(HttpStatus.BAD_REQUEST, "결제 가능한 상태(PENDING)가 아닙니다."),
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "결제 금액이 일치하지 않습니다."),
+    GROUP_PURCHASE_INVALID_END_AT(HttpStatus.BAD_REQUEST, "groupEndAt은 현재 시각 이후여야 합니다. (해당일 23:59:59 마감)"),
+
 
     // 401 Unauthorized
     INVALID_CREDENTIAL(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),

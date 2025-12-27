@@ -44,10 +44,8 @@ public class GroupPurchase extends BaseTimeEntity {
     @JoinColumn(name = "host_user_id", nullable = false)
     private User hostUser;
 
-    // 공구 진행 지역. LawDong와 연관관계
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", nullable = false)
-    private LawDong region;
+    @Column(name = "host_contact", nullable = false)
+    private String hostContact;
 
     // 총대가 구매하는 수량
     @Column(name = "host_buy_quantity", nullable = false)
@@ -87,11 +85,11 @@ public class GroupPurchase extends BaseTimeEntity {
     @Column(name = "settled_at")
     private LocalDateTime settledAt;
 
-    public static GroupPurchase create(User hostUser, LawDong region, GroupPurchaseCreateCommand cmd) {
+    public static GroupPurchase create(User hostUser, GroupPurchaseCreateCommand cmd) {
         return GroupPurchase.builder()
                 .product(cmd.getProductRegistration())
                 .hostUser(hostUser)
-                .region(region)
+                .hostContact(cmd.getHostContact())
                 .hostBuyQuantity(cmd.getHostBuyQuantity())
                 .targetQuantity(cmd.getTargetQuantity())
                 .minimumOrderUnit(cmd.getMinimumOrderUnit())

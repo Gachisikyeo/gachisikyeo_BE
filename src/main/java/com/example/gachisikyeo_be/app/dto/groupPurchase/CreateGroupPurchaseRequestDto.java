@@ -10,15 +10,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 @Schema(description = "공구 생성 요청 DTO")
 @Getter
 public class CreateGroupPurchaseRequestDto {
-
-    @Schema(description = "공구 진행 지역의 ID")
-    @NotNull(message = "regionId는 필수입니다.")
-    private String regionId;
 
     @Schema(description = "총대가 구매하는 수량")
     @Min(value = 1, message = "hostBuyQuantity는 1 이상이어야 합니다.")
@@ -32,11 +31,10 @@ public class CreateGroupPurchaseRequestDto {
     @Min(value = 1, message = "minimumOrderUnit은 1 이상이어야 합니다.")
     private int minimumOrderUnit;
 
-    @Schema(description = "공구마감시간")
+    @Schema(description = "공구 마감일 (서버에서 해당일 23:59:59로 저장)")
     @NotNull(message = "groupEndAt은 필수입니다.")
-    @Future(message = "groupEndAt은 현재 시각 이후여야 합니다.")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime groupEndAt;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate groupEndAt;
 
     @Schema(description = "공구 수령 장소")
     @NotBlank(message = "pickupLocation은 필수입니다.")
@@ -46,12 +44,19 @@ public class CreateGroupPurchaseRequestDto {
     @Schema(description = "공구 수령 시간")
     @NotNull(message = "pickupAt은 필수입니다.")
     @Future(message = "pickupAt은 현재 시각 이후여야 합니다.")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime pickupAt;
+    private OffsetDateTime pickupAt;
+
+    @Schema(description = "총대 전화번호")
+    @NotBlank(message = "hostContact는 필수입니다")
+    @Size(max = 30, message = "hostContact는 최대 30자입니다")
+    private String hostContact;
 
     @AssertTrue(message = "pickupAt은 groupEndAt 이후여야 합니다.")
     public boolean isPickupAfterEnd() {
         if (groupEndAt == null || pickupAt == null) return true; // @NotNull이 잡아줌
-        return pickupAt.isAfter(groupEndAt);
+        // ✅ groupEndAt(LocalDate) -> 해당일 23:59:59(LocalDateTime)
+        LocalDateTime endAt = groupEndAt.atTime(23, 59, 59);
+        LocalDateTime pickupAtKst = pickupAt.atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        return pickupAtKst.isAfter(endAt);
     }
 }
