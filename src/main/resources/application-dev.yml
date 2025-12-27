@@ -14,4 +14,9 @@ server:
   forward-headers-strategy: framework
 
 app:
-  front-base-url: "https://gachisikyeo.com"
+  front-base-url: "https://gachisikyeo.vercel.app"
+  cookie:
+    secure: true
+    same-site: "None"
+    refresh-max-age-seconds: 1209600   # 14일
+    signup-max-age-seconds: 600        # 10분
