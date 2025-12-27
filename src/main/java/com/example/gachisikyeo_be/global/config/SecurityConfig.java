@@ -142,7 +142,7 @@ public class SecurityConfig {
                         // 공개 GET
                         .requestMatchers(HttpMethod.GET,
                                 "/api/regions/**",
-                                "/api/lawdong/**",
+                                "/lawdong/**",
                                 "/api/products",
                                 "/api/products/**"
                         ).permitAll()
