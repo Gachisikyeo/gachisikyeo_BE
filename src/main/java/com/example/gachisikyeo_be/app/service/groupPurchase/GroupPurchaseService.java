@@ -64,6 +64,7 @@ public class GroupPurchaseService {
                 .targetQuantity(req.getTargetQuantity())
                 .minimumOrderUnit(req.getMinimumOrderUnit())
                 .groupEndAt(endAt)
+                .deliveryLocation(req.getDeliveryLocation())
                 .pickupLocation(req.getPickupLocation())
                 .pickupAt(pickupAtKst)
                 .hostContact(req.getHostContact())

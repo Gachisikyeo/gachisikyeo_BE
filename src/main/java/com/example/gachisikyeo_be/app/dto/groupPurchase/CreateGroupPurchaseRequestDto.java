@@ -36,6 +36,11 @@ public class CreateGroupPurchaseRequestDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate groupEndAt;
 
+    @Schema(description = "물품 수령 장소")
+    @NotBlank(message = "deliveryLocation은 필수입니다.")
+    @Size(max = 255, message = "deliveryLocation은 최대 255자입니다.")
+    private String deliveryLocation;
+
     @Schema(description = "공구 수령 장소")
     @NotBlank(message = "pickupLocation은 필수입니다.")
     @Size(max = 255, message = "pickupLocation은 최대 255자입니다.")

@@ -15,6 +15,7 @@ public class GroupPurchaseCreateCommand {
     private int targetQuantity;
     private int minimumOrderUnit;
     private LocalDateTime groupEndAt;
+    private String deliveryLocation;
     private String pickupLocation;
     private LocalDateTime pickupAt;
 }
