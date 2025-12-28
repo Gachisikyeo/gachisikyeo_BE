@@ -6,6 +6,7 @@ import com.example.gachisikyeo_be.global.oauth.OAuth2SuccessHandler;
 import com.example.gachisikyeo_be.global.oauth.OAuth2UserProviderRouter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -36,6 +37,9 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final OAuth2UserProviderRouter oAuth2UserProviderRouter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+    @Value("${app.front-base-url}")
+    private String frontBaseUrl;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -139,6 +143,14 @@ public class SecurityConfig {
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserProviderRouter))
                         .successHandler(oAuth2SuccessHandler)
+                        .failureHandler((request, response, exception) -> {
+                            // 서버 로그에 정확한 원인 남김
+                            exception.printStackTrace();
+
+                            // 프론트로 실패 사유를 붙여서 보내면 디버깅이 매우 빨라짐
+                            String msg = java.net.URLEncoder.encode(exception.getMessage(), java.nio.charset.StandardCharsets.UTF_8);
+                            response.sendRedirect(frontBaseUrl + "/login?oauthError=" + msg);
+                        })
                 );
 
         return http.build();
@@ -201,13 +213,26 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .oauth2Login(AbstractHttpConfigurer::disable)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(restAuthenticationEntryPoint())
                         .accessDeniedHandler(restAccessDeniedHandler())
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // ✅ OAuth2/로그인 에러 페이지 흐름에 필요한 최소 허용
+                        .requestMatchers("/", "/login", "/login/**", "/error").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/default-ui.css",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/webjars/**",
+                                "/favicon.ico"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
