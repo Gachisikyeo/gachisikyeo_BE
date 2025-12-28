@@ -19,6 +19,9 @@ public class ProductListResponse {
     @Schema(description = "총가격")
     private long price;
 
+    @Schema(description = "개당가격")
+    private long unitPrice;
+
     @Schema(description = "상품이미지 url")
     private String imageUrl;
 
@@ -30,6 +33,7 @@ public class ProductListResponse {
                 .productId(product.getId())
                 .productName(product.getProductName())
                 .price(product.getPrice())
+                .unitPrice(product.getPrice() / product.getUnitQuantity())
                 .imageUrl(product.getImageUrl())
                 .storeName(product.getBusinessInfo().getStoreName())
                 .build();
