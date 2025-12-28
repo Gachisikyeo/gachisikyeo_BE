@@ -26,6 +26,9 @@ public class GroupPurchaseDetailResponseDto {
     @Schema(description = "공구 수령 시간")
     private LocalDateTime pickupAt;
 
+    @Schema(description = "최소 주문 수량")
+    private int minimumOrderUnit;
+
     public static GroupPurchaseDetailResponseDto from(GroupPurchase gp) {
         return GroupPurchaseDetailResponseDto.builder()
                 .productName(gp.getProduct().getProductName())
@@ -33,6 +36,7 @@ public class GroupPurchaseDetailResponseDto {
                 .groupEndAt(gp.getGroupEndAt())
                 .pickupLocation(gp.getPickupLocation())
                 .pickupAt(gp.getPickupAt())
+                .minimumOrderUnit(gp.getMinimumOrderUnit())
                 .build();
     }
 }
