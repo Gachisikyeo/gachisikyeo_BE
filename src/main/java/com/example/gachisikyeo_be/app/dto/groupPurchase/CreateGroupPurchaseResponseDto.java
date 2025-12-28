@@ -23,13 +23,14 @@ public class CreateGroupPurchaseResponseDto {
     @Schema(description = "총대 전화번호")
     private String hostContact;
 
+    @Schema(description = "동 이름")
+    private String dong;
+
     @Schema(description = "현재 주문(참여) 수량")
     private int currentQuantity;
 
     @Schema(description = "목표수량")
     private int targetQuantity;
-
-    // here : 여기에 총 몇 명이 해당 공구에 참가중인지 넣어야 함
 
     @Schema(description = "공구마감시간")
     private LocalDateTime groupEndAt;
@@ -43,6 +44,7 @@ public class CreateGroupPurchaseResponseDto {
                 .currentQuantity(gp.getCurrentQuantity())
                 .targetQuantity(gp.getTargetQuantity())
                 .groupEndAt(gp.getGroupEndAt())
+                .dong(gp.getHostUser().getLawDong().getDong())
                 .build();
     }
 }

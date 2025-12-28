@@ -30,12 +30,17 @@ public class GroupPurchaseListItemResponseDto {
     @Schema(description = "목표수량")
     private int targetQuantity;
 
-
     @Schema(description = "공구마감시간")
     private LocalDateTime groupEndAt;
 
     @Schema(description = "공구 status(OPEN, SUCCESS 등)")
     private GroupPurchaseStatus status;
+
+    @Schema(description = "총 공구 참여 인원")
+    private int total_participation;
+
+    @Schema(description = "동 이름")
+    private String dong;
 
     public static GroupPurchaseListItemResponseDto from(GroupPurchase gp) {
         return GroupPurchaseListItemResponseDto.builder()
@@ -47,6 +52,8 @@ public class GroupPurchaseListItemResponseDto {
                 .targetQuantity(gp.getTargetQuantity())
                 .groupEndAt(gp.getGroupEndAt())
                 .status(gp.getStatus())
+                .total_participation(gp.getParticipations().size())
+                .dong(gp.getHostUser().getLawDong().getDong())
                 .build();
     }
 }

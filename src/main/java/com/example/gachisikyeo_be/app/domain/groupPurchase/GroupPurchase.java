@@ -1,9 +1,11 @@
 package com.example.gachisikyeo_be.app.domain.groupPurchase;
 
+import com.example.gachisikyeo_be.app.domain.participation.Participation;
 import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
 import com.example.gachisikyeo_be.global.common.BaseTimeEntity;
 import com.example.gachisikyeo_be.global.users.domain.auth.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,6 +25,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -87,6 +92,9 @@ public class GroupPurchase extends BaseTimeEntity {
     // 현재 단계에선 아직 안 쓰면 null 유지
     @Column(name = "settled_at")
     private LocalDateTime settledAt;
+
+    @OneToMany(mappedBy = "groupPurchase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participation> participations = new ArrayList<>();
 
     public static GroupPurchase create(User hostUser, GroupPurchaseCreateCommand cmd) {
         return GroupPurchase.builder()
