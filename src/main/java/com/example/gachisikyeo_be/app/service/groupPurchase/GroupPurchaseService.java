@@ -6,6 +6,7 @@ import com.example.gachisikyeo_be.app.domain.productRegistration.Product;
 import com.example.gachisikyeo_be.app.domain.region.LawDong;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseRequestDto;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseResponseDto;
+import com.example.gachisikyeo_be.app.dto.groupPurchase.GroupPurchaseDetailResponseDto;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.GroupPurchaseListItemResponseDto;
 import com.example.gachisikyeo_be.app.repository.groupPurchase.GroupPurchaseRepository;
 import com.example.gachisikyeo_be.app.repository.productRegistration.ProductRegistrationRepository;
@@ -82,6 +83,14 @@ public class GroupPurchaseService {
                 .stream()
                 .map(GroupPurchaseListItemResponseDto::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public GroupPurchaseDetailResponseDto getDetail(Long groupPurchaseId) {
+        GroupPurchase gp = groupPurchaseRepository.findDetailById(groupPurchaseId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GROUP_PURCHASE_NOT_FOUND));
+
+        return GroupPurchaseDetailResponseDto.from(gp);
     }
 
     private LocalDateTime toEndAt(LocalDate endDate) {

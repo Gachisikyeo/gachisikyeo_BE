@@ -58,4 +58,12 @@ public interface GroupPurchaseRepository extends JpaRepository<GroupPurchase, Lo
      where gp.id = :groupPurchaseId
 """)
     Optional<GroupPurchase> findByIdForUpdate(@Param("groupPurchaseId") Long groupPurchaseId);
+
+    @Query("""
+    select gp
+      from GroupPurchase gp
+      join fetch gp.product p
+     where gp.id = :groupPurchaseId
+""")
+    Optional<GroupPurchase> findDetailById(@Param("groupPurchaseId") Long groupPurchaseId);
 }

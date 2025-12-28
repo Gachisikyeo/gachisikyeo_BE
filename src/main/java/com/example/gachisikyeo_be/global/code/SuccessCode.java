@@ -30,6 +30,7 @@ public enum SuccessCode {
     // GroupPurchase
     GROUP_PURCHASE_CREATED(HttpStatus.CREATED, "공동구매 열기 성공"),
     GROUP_PURCHASE_LIST_FETCHED(HttpStatus.OK, "리스트 추출 성공"),
+    GROUP_PURCHASE_DETAIL_FETCHED(HttpStatus.OK, "상세 정보 추출 성공"),
 
     // Product
     PRODUCT_CREATED(HttpStatus.CREATED, "상품 등록 성공"),

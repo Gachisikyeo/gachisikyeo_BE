@@ -77,7 +77,7 @@ public class GroupPurchase extends BaseTimeEntity {
     private LocalDateTime groupEndAt;
 
     @Column(name = "delivery_location", nullable = false, length = 255)
-    private String delivery_location;
+    private String deliveryLocation;
 
     @Column(name = "pickup_location", nullable = false, length = 255)
     private String pickupLocation;
@@ -106,7 +106,7 @@ public class GroupPurchase extends BaseTimeEntity {
                 .minimumOrderUnit(cmd.getMinimumOrderUnit())
                 .currentQuantity(cmd.getHostBuyQuantity()) // 매직넘버 제거, 초기값 일관성
                 .groupEndAt(cmd.getGroupEndAt())
-                .delivery_location(cmd.getDeliveryLocation())
+                .deliveryLocation(cmd.getDeliveryLocation())
                 .pickupLocation(cmd.getPickupLocation())
                 .pickupAt(cmd.getPickupAt())
                 .status(GroupPurchaseStatus.OPEN)

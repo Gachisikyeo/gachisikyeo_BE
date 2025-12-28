@@ -2,6 +2,7 @@ package com.example.gachisikyeo_be.app.controller.groupPurchase;
 
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseRequestDto;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.CreateGroupPurchaseResponseDto;
+import com.example.gachisikyeo_be.app.dto.groupPurchase.GroupPurchaseDetailResponseDto;
 import com.example.gachisikyeo_be.app.dto.groupPurchase.GroupPurchaseListItemResponseDto;
 import com.example.gachisikyeo_be.app.service.groupPurchase.GroupPurchaseService;
 import com.example.gachisikyeo_be.global.code.ErrorCode;
@@ -54,6 +55,16 @@ public class GroupPurchaseCommandController {
     ){
         List<GroupPurchaseListItemResponseDto> res = groupPurchaseService.listByProduct(productId);
         return ApiResponseTemplate.success(SuccessCode.GROUP_PURCHASE_LIST_FETCHED, res);
+    }
+
+    @Operation(summary = "공구 참여 상세 조회",
+            description = "공구 조회")
+    @GetMapping("/group-purchases/{groupPurchaseId}")
+    public ResponseEntity<ApiResponseTemplate<GroupPurchaseDetailResponseDto>> getDetail(
+            @PathVariable Long groupPurchaseId
+    ) {
+        GroupPurchaseDetailResponseDto res = groupPurchaseService.getDetail(groupPurchaseId);
+        return ApiResponseTemplate.success(SuccessCode.GROUP_PURCHASE_DETAIL_FETCHED, res);
     }
 
     private Long extractUserId(Authentication authentication) {
