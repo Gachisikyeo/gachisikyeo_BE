@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Repository
 public interface GroupPurchaseRepository extends JpaRepository<GroupPurchase, Long> {
-    @EntityGraph(attributePaths = {"hostUser", "region"})
+    @EntityGraph(attributePaths = {"hostUser"})
     List<GroupPurchase> findByProductIdOrderByCreatedAtDesc(Long productId);
 
     /*
