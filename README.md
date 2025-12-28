@@ -38,7 +38,7 @@
 
 ## 배포 URL (dev profile 기준)
 ```text
-Frontend: https://gachisikyeo.com
+Frontend: https://gachisikyeo.vercel.app
 Backend OAuth Redirect Base: http://gachisikyeo.duckdns.org
 ```
 ## 기술 스택
